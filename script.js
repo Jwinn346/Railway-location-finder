@@ -9,8 +9,9 @@ document.addEventListener("DOMContentLoaded", function() {
       const randomIndex = Math.floor(Math.random() * data.length);
       const location = data[randomIndex];
 
-      // Display the location details
-      document.getElementById("locationName").textContent = location.postcode;
+      // Display the postcode and street name
+      document.getElementById("locationName").textContent = "Postcode: " + location.postcode;
+      document.getElementById("streetName").textContent = "Street: " + location.street;
 
       // Generate Google Maps link
       const googleMapsLink = document.getElementById("googleMapsLink");
