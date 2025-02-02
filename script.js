@@ -8,12 +8,15 @@ document.addEventListener("DOMContentLoaded", function() {
   function startTimer() {
     let timeLeft = totalTime;
     clearInterval(timerInterval);
+    document.getElementById("timer").textContent = `⏳ Timer: 5:00`;
+    document.getElementById("hint").classList.add("hidden"); // Hide hint initially
+
     timerInterval = setInterval(() => {
       if (timeLeft <= 0) {
         clearInterval(timerInterval);
-        alert("⏳ Time's up! The correct location was: " + currentLocation.street + ", " + currentLocation.postcode);
+        alert(`⏳ Time's up! The correct location was: ${currentLocation.street}, ${currentLocation.postcode}`);
       } else if (timeLeft === hintTime) {
-        document.getElementById("hint").textContent = "🔎 Hint: The street name is " + currentLocation.street;
+        document.getElementById("hint").textContent = `🔎 Hint: The street name is ${currentLocation.street}`;
         document.getElementById("hint").classList.remove("hidden");
       }
       updateTimerDisplay(timeLeft);
@@ -25,7 +28,7 @@ document.addEventListener("DOMContentLoaded", function() {
   function updateTimerDisplay(seconds) {
     const minutes = Math.floor(seconds / 60);
     const secs = seconds % 60;
-    document.getElementById("timer").textContent = `⏳ ${minutes}:${secs < 10 ? '0' : ''}${secs}`;
+    document.getElementById("timer").textContent = `⏳ Timer: ${minutes}:${secs < 10 ? '0' : ''}${secs}`;
   }
 
   // Function to fetch JSON data and generate a location
