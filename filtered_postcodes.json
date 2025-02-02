@@ -2,16 +2,7 @@
     {
         "postcode": "N1C 4AG",
         "street": "York Way",
+        "what3words": "apple.orange.banana",
         "coordinates": { "lat": 51.5322, "lon": -0.1237 }
-    },
-    {
-        "postcode": "PE1 1QL",
-        "street": "Broadway",
-        "coordinates": { "lat": 52.5742, "lon": -0.2432 }
-    },
-    {
-        "postcode": "SG4 9UN",
-        "street": "Station Road",
-        "coordinates": { "lat": 51.9532, "lon": -0.2734 }
     }
 ]
