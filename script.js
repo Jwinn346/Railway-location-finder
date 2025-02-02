@@ -11,9 +11,10 @@ document.addEventListener("DOMContentLoaded", function() {
     timerInterval = setInterval(() => {
       if (timeLeft <= 0) {
         clearInterval(timerInterval);
-        alert("Time's up! The correct location was: " + currentLocation.street + ", " + currentLocation.postcode);
+        alert("⏳ Time's up! The correct location was: " + currentLocation.street + ", " + currentLocation.postcode);
       } else if (timeLeft === hintTime) {
-        document.getElementById("hint").textContent = "Hint: The street name is " + currentLocation.street;
+        document.getElementById("hint").textContent = "🔎 Hint: The street name is " + currentLocation.street;
+        document.getElementById("hint").classList.remove("hidden");
       }
       updateTimerDisplay(timeLeft);
       timeLeft--;
@@ -24,7 +25,7 @@ document.addEventListener("DOMContentLoaded", function() {
   function updateTimerDisplay(seconds) {
     const minutes = Math.floor(seconds / 60);
     const secs = seconds % 60;
-    document.getElementById("timer").textContent = `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
+    document.getElementById("timer").textContent = `⏳ ${minutes}:${secs < 10 ? '0' : ''}${secs}`;
   }
 
   // Function to fetch JSON data and generate a location
@@ -36,10 +37,11 @@ document.addEventListener("DOMContentLoaded", function() {
         currentLocation = data[randomIndex];
 
         // Display the postcode immediately
-        document.getElementById("locationName").textContent = `Postcode: ${currentLocation.postcode}`;
+        document.getElementById("locationName").textContent = `📍 Postcode: ${currentLocation.postcode}`;
 
         // Hide previous data
         document.getElementById("hint").textContent = "";
+        document.getElementById("hint").classList.add("hidden");
         document.getElementById("postcode").classList.add("hidden");
         document.getElementById("street").classList.add("hidden");
         document.getElementById("w3w").classList.add("hidden");
@@ -59,7 +61,7 @@ document.addEventListener("DOMContentLoaded", function() {
   document.querySelectorAll(".reveal-btn").forEach(button => {
     button.addEventListener("click", function() {
       if (!currentLocation) {
-        alert("Please generate a location first!");
+        alert("⚠️ Please generate a location first!");
         return;
       }
 
@@ -82,4 +84,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
       if (currentLocation.what3words) {
         document.getElementById("w3wLink").href = `https://what3words.com/${currentLocation.what3words}`;
-        document.getElementById("w3wLink").classList.remove53
+        document.getElementById("w3wLink").classList.remove("hidden");
+      }
+    });
+  });
+
+});
