@@ -1,7 +1,31 @@
-// Wait until the page fully loads before running the script
 document.addEventListener("DOMContentLoaded", function() {
-
   let currentLocation = null;
+  let timerInterval;
+  const totalTime = 5 * 60; // 5 minutes in seconds
+  const hintTime = 2 * 60; // 2 minutes in seconds
+
+  // Function to start the timer
+  function startTimer() {
+    let timeLeft = totalTime;
+    clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+      if (timeLeft <= 0) {
+        clearInterval(timerInterval);
+        alert("Time's up! The correct location was: " + currentLocation.street + ", " + currentLocation.postcode);
+      } else if (timeLeft === hintTime) {
+        document.getElementById("hint").textContent = "Hint: The street name is " + currentLocation.street;
+      }
+      updateTimerDisplay(timeLeft);
+      timeLeft--;
+    }, 1000);
+  }
+
+  // Function to update the timer display
+  function updateTimerDisplay(seconds) {
+    const minutes = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    document.getElementById("timer").textContent = `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
+  }
 
   // Function to fetch JSON data and generate a location
   function fetchLocationData() {
@@ -15,11 +39,15 @@ document.addEventListener("DOMContentLoaded", function() {
         document.getElementById("locationName").textContent = `Postcode: ${currentLocation.postcode}`;
 
         // Hide previous data
+        document.getElementById("hint").textContent = "";
         document.getElementById("postcode").classList.add("hidden");
         document.getElementById("street").classList.add("hidden");
         document.getElementById("w3w").classList.add("hidden");
         document.getElementById("googleMapsLink").classList.add("hidden");
         document.getElementById("w3wLink").classList.add("hidden");
+
+        // Start the timer
+        startTimer();
       })
       .catch(error => console.error('Error loading location data:', error));
   }
@@ -54,9 +82,4 @@ document.addEventListener("DOMContentLoaded", function() {
 
       if (currentLocation.what3words) {
         document.getElementById("w3wLink").href = `https://what3words.com/${currentLocation.what3words}`;
-        document.getElementById("w3wLink").classList.remove("hidden");
-      }
-    });
-  });
-
-});
+        document.getElementById("w3wLink").classList.remove53
