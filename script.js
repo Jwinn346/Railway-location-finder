@@ -3,22 +3,27 @@ document.addEventListener("DOMContentLoaded", function () {
     let timerInterval;
     let hintTimeout;
 
-    // Function to fetch JSON data and generate a location
+    // Function to fetch JSON data
     function fetchLocationData() {
         fetch('filtered_postcodes.json')
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
             .then(data => {
-                if (!data || data.length === 0) {
-                    console.error('No data available in the JSON file.');
+                if (!Array.isArray(data) || data.length === 0) {
+                    console.error("JSON data is empty or not an array.");
                     return;
                 }
 
+                // Select a random location
                 const randomIndex = Math.floor(Math.random() * data.length);
                 currentLocation = data[randomIndex];
 
                 console.log("Generated Location:", currentLocation);
 
-                // Ensure required fields exist
                 document.getElementById("locationName").textContent = "🔍 Location generated!";
                 document.getElementById("postcode").classList.add("hidden");
                 document.getElementById("street").classList.add("hidden");
@@ -26,13 +31,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 document.getElementById("googleMapsLink").classList.add("hidden");
                 document.getElementById("w3wLink").classList.add("hidden");
 
-                // Start a 5-minute timer
+                // Start the timer
                 startTimer();
             })
-            .catch(error => console.error('Error loading location data:', error));
+            .catch(error => console.error("Error loading JSON:", error));
     }
 
-    // Function to reveal information when buttons are clicked
+    // Function to reveal info
     function revealInfo(event) {
         if (!currentLocation) {
             alert("Please generate a location first!");
@@ -44,13 +49,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (element) {
             element.classList.remove("hidden");
-            if (type === "postcode") {
-                element.querySelector("span").textContent = currentLocation.postcode || "Not available";
-            } else if (type === "street") {
-                element.querySelector("span").textContent = currentLocation.street || "Not available";
-            } else if (type === "w3w") {
-                element.querySelector("span").textContent = currentLocation.w3w || "Not available";
-            }
+            element.querySelector("span").textContent = currentLocation[type] || "Not available";
 
             // Update Google Maps link
             if (currentLocation.lat && currentLocation.lon) {
@@ -60,12 +59,12 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // Timer function
+    // Function to start a countdown timer
     function startTimer() {
         let timeLeft = 300; // 5 minutes
         document.getElementById("timer").textContent = `⏳ Timer: 5:00`;
 
-        // Reset previous intervals if they exist
+        // Clear existing intervals if needed
         if (timerInterval) clearInterval(timerInterval);
         if (hintTimeout) clearTimeout(hintTimeout);
 
