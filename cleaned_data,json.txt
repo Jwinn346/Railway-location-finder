@@ -1,0 +1,50 @@
+[
+    {
+        "postcode": "N1 9AL",
+        "street": "Pentonville Road",
+        "lat": 51.5309307,
+        "lon": -0.1204814
+    },
+    {
+        "postcode": "N1 9RL",
+        "street": "York Way",
+        "lat": 51.5334008,
+        "lon": -0.1223764
+    },
+    {
+        "postcode": "WC1X 0HD",
+        "street": "Gray's Inn Road",
+        "lat": 51.5286853,
+        "lon": -0.1195427
+    },
+    {
+        "postcode": "N1 9DH",
+        "street": "Killick Street",
+        "lat": 51.5318368,
+        "lon": -0.118346
+    },
+    {
+        "postcode": "N1 9BU",
+        "street": "Balfe Street",
+        "lat": 51.5327725,
+        "lon": -0.1207431
+    },
+    {
+        "postcode": "WC1X 9JF",
+        "street": "Collier Street",
+        "lat": 51.5321325,
+        "lon": -0.1189678
+    },
+    {
+        "postcode": "N1 9DN",
+        "street": "Wharfdale Road",
+        "lat": 51.5334008,
+        "lon": -0.1223764
+    },
+    {
+        "postcode": "WC1X 9DZ",
+        "street": "Britannia Street",
+        "lat": 51.5300912,
+        "lon": -0.1176077
+    }
+]
