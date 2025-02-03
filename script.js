@@ -64,10 +64,18 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        // Display the full location immediately
+        // Display the location immediately
         document.getElementById("locationName").textContent = `📍 ${currentLocation.street}, ${currentLocation.postcode}`;
 
-        // Hide previous data until revealed
+        // Populate hidden fields
+        document.getElementById("postcode").querySelector("span").textContent = currentLocation.postcode;
+        document.getElementById("street").querySelector("span").textContent = currentLocation.street;
+
+        // Prepare Google Maps link
+        let mapsUrl = `https://www.google.com/maps?q=${currentLocation.lat},${currentLocation.lon}`;
+        document.getElementById("googleMapsLink").href = mapsUrl;
+
+        // Reset and hide reveal sections
         document.getElementById("postcode").classList.add("hidden");
         document.getElementById("street").classList.add("hidden");
         document.getElementById("w3w").classList.add("hidden");
@@ -87,18 +95,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (type === "postcode") {
             document.getElementById("postcode").classList.remove("hidden");
-            document.getElementById("postcode").querySelector("span").textContent = currentLocation.postcode;
         } else if (type === "street") {
             document.getElementById("street").classList.remove("hidden");
-            document.getElementById("street").querySelector("span").textContent = currentLocation.street;
         } else if (type === "w3w") {
             document.getElementById("w3w").classList.remove("hidden");
             document.getElementById("w3w").querySelector("span").textContent = "🔗 Not available"; // Placeholder for W3W data
         }
 
         // Show Google Maps link
-        let mapsUrl = `https://www.google.com/maps?q=${currentLocation.lat},${currentLocation.lon}`;
-        document.getElementById("googleMapsLink").href = mapsUrl;
         document.getElementById("googleMapsLink").classList.remove("hidden");
     }
 
