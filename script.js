@@ -47,7 +47,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }, 1000);
     }
 
-    // Generate a random location
+    // Generate a random location and reveal one clue
     function generateRandomLocation() {
         if (locationData.length === 0) {
             console.error("Location data is empty.");
@@ -64,23 +64,31 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        // Display the location immediately
-        document.getElementById("locationName").textContent = `📍 ${currentLocation.street}, ${currentLocation.postcode}`;
+        // Randomly pick a clue to reveal first (postcode, street, or What3Words)
+        let clues = ["postcode", "street", "w3w"];
+        let initialClue = clues[Math.floor(Math.random() * clues.length)];
 
-        // Populate hidden fields
-        document.getElementById("postcode").querySelector("span").textContent = currentLocation.postcode;
-        document.getElementById("street").querySelector("span").textContent = currentLocation.street;
-
-        // Prepare Google Maps link
+        // Set up the Google Maps link
         let mapsUrl = `https://www.google.com/maps?q=${currentLocation.lat},${currentLocation.lon}`;
         document.getElementById("googleMapsLink").href = mapsUrl;
 
-        // Reset and hide reveal sections
+        // Hide all details initially
         document.getElementById("postcode").classList.add("hidden");
         document.getElementById("street").classList.add("hidden");
         document.getElementById("w3w").classList.add("hidden");
         document.getElementById("googleMapsLink").classList.add("hidden");
         document.getElementById("w3wLink").classList.add("hidden");
+
+        // Populate details but only reveal one clue
+        document.getElementById("postcode").querySelector("span").textContent = currentLocation.postcode;
+        document.getElementById("street").querySelector("span").textContent = currentLocation.street;
+        document.getElementById("w3w").querySelector("span").textContent = "🔗 Not available"; // Placeholder for W3W data
+
+        // Show only the selected clue
+        document.getElementById(initialClue).classList.remove("hidden");
+
+        // Set the main displayed location text
+        document.getElementById("locationName").textContent = `🔎 Your starting clue is revealed!`;
 
         // Start the timer
         startTimer();
@@ -99,7 +107,6 @@ document.addEventListener("DOMContentLoaded", function () {
             document.getElementById("street").classList.remove("hidden");
         } else if (type === "w3w") {
             document.getElementById("w3w").classList.remove("hidden");
-            document.getElementById("w3w").querySelector("span").textContent = "🔗 Not available"; // Placeholder for W3W data
         }
 
         // Show Google Maps link
