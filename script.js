@@ -85,15 +85,16 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("w3w").querySelector("span").textContent = "🔗 Not available"; // Placeholder for W3W data
 
         // Only show the selected initial clue
-        document.getElementById(initialClue).classList.remove("hidden");
-
-        // Ensure others stay hidden until manually revealed
-        if (initialClue !== "postcode") document.getElementById("postcode").classList.add("hidden");
-        if (initialClue !== "street") document.getElementById("street").classList.add("hidden");
-        if (initialClue !== "w3w") document.getElementById("w3w").classList.add("hidden");
-
-        // Set the main displayed location text
-        document.getElementById("locationName").textContent = `🔎 Your starting clue: ${initialClue === "postcode" ? "Postcode" : initialClue === "street" ? "Street Name" : "What3Words"}`;
+        if (initialClue === "postcode") {
+            document.getElementById("locationName").textContent = `📍 Postcode: ${currentLocation.postcode}`;
+            document.getElementById("postcode").classList.remove("hidden");
+        } else if (initialClue === "street") {
+            document.getElementById("locationName").textContent = `📍 Street: ${currentLocation.street}`;
+            document.getElementById("street").classList.remove("hidden");
+        } else {
+            document.getElementById("locationName").textContent = `📍 What3Words: 🔗 Not available`;
+            document.getElementById("w3w").classList.remove("hidden");
+        }
 
         // Start the timer
         startTimer();
