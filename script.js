@@ -68,10 +68,6 @@ document.addEventListener("DOMContentLoaded", function () {
         let clues = ["postcode", "street", "w3w"];
         let initialClue = clues[Math.floor(Math.random() * clues.length)];
 
-        // Set up the Google Maps link
-        let mapsUrl = `https://www.google.com/maps?q=${currentLocation.lat},${currentLocation.lon}`;
-        document.getElementById("googleMapsLink").href = mapsUrl;
-
         // Hide all details initially
         document.getElementById("postcode").classList.add("hidden");
         document.getElementById("street").classList.add("hidden");
@@ -84,7 +80,11 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("street").querySelector("span").textContent = currentLocation.street;
         document.getElementById("w3w").querySelector("span").textContent = "🔗 Not available"; // Placeholder for W3W data
 
-        // Only show the selected initial clue
+        // Set up the Google Maps link
+        let mapsUrl = `https://www.google.com/maps?q=${currentLocation.lat},${currentLocation.lon}`;
+        document.getElementById("googleMapsLink").href = mapsUrl;
+
+        // Show only the randomly selected clue
         if (initialClue === "postcode") {
             document.getElementById("locationName").textContent = `📍 Postcode: ${currentLocation.postcode}`;
             document.getElementById("postcode").classList.remove("hidden");
@@ -100,7 +100,7 @@ document.addEventListener("DOMContentLoaded", function () {
         startTimer();
     }
 
-    // Reveal additional details
+    // Reveal additional details when clicking the buttons
     function revealData(type) {
         if (!currentLocation) {
             console.error("No location selected.");
