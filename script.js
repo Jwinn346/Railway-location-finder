@@ -9,9 +9,16 @@ document.addEventListener("DOMContentLoaded", function () {
         try {
             const response = await fetch("filtered_postcodes.json");
             locationData = await response.json();
-            console.log("Location data loaded:", locationData);
+
+            if (locationData.length === 0) {
+                console.error("JSON file is empty or not loading correctly.");
+                document.getElementById("locationName").textContent = "⚠ No location data available!";
+            } else {
+                console.log("Location data loaded:", locationData);
+            }
         } catch (error) {
             console.error("Error loading location data:", error);
+            document.getElementById("locationName").textContent = "⚠ Failed to load location data!";
         }
     }
 
@@ -20,6 +27,7 @@ document.addEventListener("DOMContentLoaded", function () {
         clearInterval(timer);
         timeLeft = 300; // Reset to 5 minutes
         document.getElementById("timer").textContent = `⏳ Timer: 5:00`;
+        document.getElementById("hint").classList.add("hidden"); // Reset hint visibility
 
         timer = setInterval(() => {
             timeLeft--;
@@ -43,15 +51,22 @@ document.addEventListener("DOMContentLoaded", function () {
     function generateRandomLocation() {
         if (locationData.length === 0) {
             console.error("Location data is empty.");
+            document.getElementById("locationName").textContent = "⚠ No location data available!";
             return;
         }
 
         // Select a random location
         currentLocation = locationData[Math.floor(Math.random() * locationData.length)];
 
-        // Display location name immediately
+        if (!currentLocation || !currentLocation.street || !currentLocation.postcode) {
+            console.error("Invalid location data:", currentLocation);
+            document.getElementById("locationName").textContent = "⚠ Location data error!";
+            return;
+        }
+
+        // Display the full location immediately
         document.getElementById("locationName").textContent = `📍 ${currentLocation.street}, ${currentLocation.postcode}`;
-        
+
         // Hide previous data until revealed
         document.getElementById("postcode").classList.add("hidden");
         document.getElementById("street").classList.add("hidden");
@@ -65,7 +80,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Reveal additional details
     function revealData(type) {
-        if (!currentLocation) return;
+        if (!currentLocation) {
+            console.error("No location selected.");
+            return;
+        }
 
         if (type === "postcode") {
             document.getElementById("postcode").classList.remove("hidden");
