@@ -84,7 +84,7 @@ document.addEventListener("DOMContentLoaded", function () {
         let mapsUrl = `https://www.google.com/maps?q=${currentLocation.lat},${currentLocation.lon}`;
         document.getElementById("googleMapsLink").href = mapsUrl;
 
-        // Show only the randomly selected clue
+        // Ensure only one initial clue is shown
         if (initialClue === "postcode") {
             document.getElementById("locationName").textContent = `📍 Postcode: ${currentLocation.postcode}`;
             document.getElementById("postcode").classList.remove("hidden");
