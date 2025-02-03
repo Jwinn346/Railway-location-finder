@@ -47,7 +47,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }, 1000);
     }
 
-    // Generate a random location and reveal one clue
+    // Generate a random location and reveal only one clue
     function generateRandomLocation() {
         if (locationData.length === 0) {
             console.error("Location data is empty.");
@@ -64,7 +64,7 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        // Randomly pick a clue to reveal first (postcode, street, or What3Words)
+        // Randomly pick one clue to reveal first (postcode, street, or What3Words)
         let clues = ["postcode", "street", "w3w"];
         let initialClue = clues[Math.floor(Math.random() * clues.length)];
 
@@ -79,16 +79,21 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("googleMapsLink").classList.add("hidden");
         document.getElementById("w3wLink").classList.add("hidden");
 
-        // Populate details but only reveal one clue
+        // Populate details but keep them hidden except for the chosen clue
         document.getElementById("postcode").querySelector("span").textContent = currentLocation.postcode;
         document.getElementById("street").querySelector("span").textContent = currentLocation.street;
         document.getElementById("w3w").querySelector("span").textContent = "🔗 Not available"; // Placeholder for W3W data
 
-        // Show only the selected clue
+        // Only show the selected initial clue
         document.getElementById(initialClue).classList.remove("hidden");
 
+        // Ensure others stay hidden until manually revealed
+        if (initialClue !== "postcode") document.getElementById("postcode").classList.add("hidden");
+        if (initialClue !== "street") document.getElementById("street").classList.add("hidden");
+        if (initialClue !== "w3w") document.getElementById("w3w").classList.add("hidden");
+
         // Set the main displayed location text
-        document.getElementById("locationName").textContent = `🔎 Your starting clue is revealed!`;
+        document.getElementById("locationName").textContent = `🔎 Your starting clue: ${initialClue === "postcode" ? "Postcode" : initialClue === "street" ? "Street Name" : "What3Words"}`;
 
         // Start the timer
         startTimer();
