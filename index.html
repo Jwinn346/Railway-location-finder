@@ -13,11 +13,10 @@
         <h1>East Coast South Location Generator</h1>
     </header>
 
-    <main>
+    <main id="mainScreen">
         <button id="generateLocation">Generate Random Location</button>
-
         <p id="timer">⏳ Timer: 5:00</p>
-<p id="hint" class="hidden">🔎 Hint: Will appear after 2 minutes...</p>
+        <p id="hint" class="hidden">🔎 Hint: Will appear after 2 minutes...</p>
 
         <div id="locationContainer">
             <p><strong>Location:</strong> <span id="locationName">Click the button to generate.</span></p>
@@ -32,12 +31,23 @@
 
             <a id="googleMapsLink" href="#" target="_blank" class="hidden">View on Google Maps</a>
             <a id="w3wLink" href="#" target="_blank" class="hidden">View on What3Words</a>
+
+            <button id="finishButton">Finish</button>
         </div>
     </main>
 
-    <footer>
-        <a href="admin.html">Admin Login</a>
-    </footer>
+    <!-- Results Screen -->
+    <div id="resultScreen" class="hidden">
+        <h2>Final Answer</h2>
+        <p><strong>Street:</strong> <span id="finalStreet"></span></p>
+        <p><strong>Postcode:</strong> <span id="finalPostcode"></span></p>
+        <p><strong>What3Words:</strong> <span id="finalW3W"></span></p>
+        <p><strong>Time Taken:</strong> <span id="finalTime"></span></p>
+
+        <img id="mapScreenshot" src="" alt="Google Maps Screenshot">
+
+        <button id="restartButton">Restart</button>
+    </div>
 
 </body>
 </html>
