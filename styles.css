@@ -1,46 +1,16 @@
-body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-    margin: 20px;
-    background-color: #f8f8f8;
-}
-
-header h1 {
-    color: #333;
-}
-
-button {
-    padding: 10px 15px;
-    margin: 10px;
-    font-size: 16px;
-    cursor: pointer;
-    border: none;
-    background-color: #007bff;
-    color: white;
-    border-radius: 5px;
-}
-
-button:hover {
-    background-color: #0056b3;
-}
-
 .hidden {
     display: none;
 }
 
-#locationContainer {
-    margin-top: 20px;
-    padding: 15px;
-    background: white;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-    display: inline-block;
+#resultScreen {
+    text-align: center;
+    padding: 20px;
 }
 
-footer {
-    margin-top: 30px;
-}
-
-footer a {
-    text-decoration: none;
-    color: #007bff;
+#mapScreenshot {
+    width: 100%;
+    max-width: 500px;
+    height: auto;
+    border: 1px solid #ccc;
+    margin-top: 10px;
 }
