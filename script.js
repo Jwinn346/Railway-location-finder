@@ -1,18 +1,6 @@
-document.addEventListener("DOMContentLoaded", function () {
-    console.log("Script loaded!");
+document.addEventListener("DOMContentLoaded", async function () {
+    console.log("🔹 Script Loaded!");
 
-    const generateButton = document.getElementById("generateLocation");
-    const revealPostcodeButton = document.getElementById("revealPostcode");
-    const revealStreetButton = document.getElementById("revealStreet");
-    const revealW3WButton = document.getElementById("revealW3W");
-
-    const postcodeElement = document.getElementById("postcode");
-    const streetElement = document.getElementById("street");
-    const what3wordsElement = document.getElementById("what3words");
-
-    let locationData = [];
-
-    // JSON files stored in /docs/ for GitHub Pages
     const jsonPaths = [
         "docs/railways-london.geojson",
         "docs/railways-hertfordshire.geojson",
@@ -21,58 +9,81 @@ document.addEventListener("DOMContentLoaded", function () {
     ];
 
     async function loadLocationData() {
-        console.log("Loading location data...");
+        console.log("📡 Fetching JSON data...");
         try {
-            const fetches = jsonPaths.map(path => fetch(path).then(response => response.json()));
-            const results = await Promise.all(fetches);
+            const fetches = jsonPaths.map(path =>
+                fetch(path)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`❌ Failed to load: ${path} (HTTP ${response.status})`);
+                        }
+                        return response.json();
+                    })
+                    .catch(error => {
+                        console.error("⚠️ Fetch Error:", error);
+                        return null;
+                    })
+            );
 
-            locationData = results.flatMap(result => result.features);
-            console.log(`Loaded ${locationData.length} locations.`);
+            const results = await Promise.all(fetches);
+            const loadedData = results.filter(data => data !== null).flatMap(data => data.features || []);
+            console.log(`✅ Successfully loaded ${loadedData.length} locations.`);
+            return loadedData;
         } catch (error) {
-            console.error("Error loading JSON files:", error);
+            console.error("🚨 Critical Error Loading JSON:", error);
+            return [];
         }
+    }
+
+    const locationData = await loadLocationData();
+
+    if (locationData.length === 0) {
+        alert("⚠️ No locations loaded! Check the console for errors.");
+        return;
     }
 
     function getRandomLocation() {
         if (locationData.length === 0) {
-            console.warn("No locations loaded!");
+            console.warn("⚠️ No locations available.");
             return null;
         }
-        const randomIndex = Math.floor(Math.random() * locationData.length);
-        return locationData[randomIndex];
+        return locationData[Math.floor(Math.random() * locationData.length)];
     }
 
-    generateButton.addEventListener("click", function () {
-        console.log("Generate button clicked.");
+    function updateUIWithLocation(location) {
+        if (!location || !location.properties) {
+            console.error("❌ Invalid location data.");
+            return;
+        }
+        console.log("📌 Selected Location:", location);
+
+        document.getElementById("postcode").textContent = location.properties.postcode || "N/A";
+        document.getElementById("street").textContent = location.properties.street || "N/A";
+        document.getElementById("what3words").textContent = location.properties.what3words || "N/A";
+    }
+
+    document.getElementById("generateLocation").addEventListener("click", function () {
+        console.log("🎲 Generate Button Clicked!");
         const location = getRandomLocation();
-        if (!location) return;
-
-        postcodeElement.textContent = "Hidden";
-        streetElement.textContent = "Hidden";
-        what3wordsElement.textContent = "Hidden";
-
-        generateButton.dataset.location = JSON.stringify(location);
-        console.log("Generated location:", location);
+        if (location) {
+            updateUIWithLocation(location);
+        }
     });
 
-    revealPostcodeButton.addEventListener("click", function () {
-        console.log("Reveal postcode clicked.");
-        const location = JSON.parse(generateButton.dataset.location || "{}");
-        postcodeElement.textContent = location.properties?.postcode || "No postcode available";
+    document.getElementById("revealPostcode").addEventListener("click", function () {
+        console.log("📍 Reveal Postcode Clicked!");
+        document.getElementById("postcode").style.display = "inline";
     });
 
-    revealStreetButton.addEventListener("click", function () {
-        console.log("Reveal street clicked.");
-        const location = JSON.parse(generateButton.dataset.location || "{}");
-        streetElement.textContent = location.properties?.street || "No street available";
+    document.getElementById("revealStreet").addEventListener("click", function () {
+        console.log("🚦 Reveal Street Clicked!");
+        document.getElementById("street").style.display = "inline";
     });
 
-    revealW3WButton.addEventListener("click", function () {
-        console.log("Reveal What3Words clicked.");
-        const location = JSON.parse(generateButton.dataset.location || "{}");
-        what3wordsElement.textContent = location.properties?.what3words || "No W3W available";
+    document.getElementById("revealW3W").addEventListener("click", function () {
+        console.log("🌍 Reveal What3Words Clicked!");
+        document.getElementById("what3words").style.display = "inline";
     });
 
-    // Load data when the page is ready
-    loadLocationData();
+    console.log("✅ Script Ready!");
 });
