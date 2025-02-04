@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let locationData = [];
 
     // ✅ Check if JSON loads
-    fetch("filtered_postcodes.json")
+    fetch("https://jwinn346.github.io/Railway-location-finder/docs/filtered_postcodes.json")
         .then(response => {
             if (!response.ok) throw new Error("JSON not found!");
             return response.json();
