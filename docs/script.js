@@ -12,10 +12,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
     let locationData = [];
 
-    // ✅ Load JSON File from /docs/
-    fetch("filtered_postcodes.json") // Make sure JSON is in /docs/
-        .then(response => response.json())
+    // ✅ Check if JSON loads
+    fetch("filtered_postcodes.json")
+        .then(response => {
+            if (!response.ok) throw new Error("JSON not found!");
+            return response.json();
+        })
         .then(data => {
+            console.log("JSON Loaded:", data); // 🔍 Debugging
             locationData = data;
         })
         .catch(error => console.error("Error loading JSON:", error));
@@ -26,7 +30,7 @@ document.addEventListener("DOMContentLoaded", function () {
             alert("Location data is still loading...");
             return;
         }
-        
+
         const randomLocation = locationData[Math.floor(Math.random() * locationData.length)];
 
         postcodeEl.innerText = "Hidden";
