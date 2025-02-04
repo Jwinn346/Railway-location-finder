@@ -5,36 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>East Coast South Location Generator</title>
     <link rel="stylesheet" href="styles.css">
+    <script defer src="script.js"></script>
 </head>
 <body>
+
     <h1>East Coast South Location Generator</h1>
-    
-    <button id="generate">Generate Random Location</button>
-    
-    <p>⏳ <strong>Timer:</strong> <span id="timer">5:00</span></p>
-    <p>🔍 <strong>Hint:</strong> Will appear after 2 minutes...</p>
 
-    <p><strong>Location:</strong> Click the button to generate.</p>
-    <button id="revealPostcode">Reveal Postcode</button>
-    <button id="revealStreet">Reveal Street Name</button>
-    <button id="revealW3W">Reveal What3Words</button>
-
+    <button id="generate-btn">Generate Random Location</button>
+    
     <p><strong>Postcode:</strong> <span id="postcode"></span></p>
     <p><strong>Street:</strong> <span id="street"></span></p>
-    <p><strong>What3Words:</strong> <span id="w3w"></span></p>
+    <p><strong>What3Words:</strong> <span id="what3words"></span></p>
 
-    <p><a id="googleMaps" href="#" target="_blank">View on Google Maps</a>
-       <a id="what3words" href="#" target="_blank">View on What3Words</a></p>
+    <p>
+        <a id="google-maps-link" href="#" target="_blank">View on Google Maps</a> |
+        <a id="what3words-link" href="#" target="_blank">View on What3Words</a>
+    </p>
 
-    <h2>Final Answer</h2>
-    <p><strong>Street:</strong> <span id="finalStreet"></span></p>
-    <p><strong>Postcode:</strong> <span id="finalPostcode"></span></p>
-    <p><strong>What3Words:</strong> <span id="finalW3W"></span></p>
-    <p><strong>Time Taken:</strong> <span id="timeTaken"></span></p>
-
-    <p><strong>Google Maps Screenshot</strong> <button id="restart">Restart</button></p>
-    <p><a href="admin.html">Admin Login</a></p>
-
-    <script src="script.js"></script> <!-- ✅ Make sure script is loading -->
 </body>
 </html>
