@@ -1,132 +1,125 @@
-document.addEventListener("DOMContentLoaded", function () {
-    let locationData = [];
+document.addEventListener("DOMContentLoaded", () => {
+    const generateBtn = document.getElementById("generateLocation");
+    const revealBtns = document.querySelectorAll(".reveal-btn");
+    const locationName = document.getElementById("locationName");
+    const postcodeElement = document.querySelector("#postcode span");
+    const streetElement = document.querySelector("#street span");
+    const w3wElement = document.querySelector("#w3w span");
+    const timerElement = document.getElementById("timer");
+    const hintElement = document.getElementById("hint");
+    const finishButton = document.getElementById("finishButton");
+    const restartButton = document.getElementById("restartButton");
+    const resultScreen = document.getElementById("resultScreen");
+    const mainScreen = document.getElementById("mainScreen");
+
+    const finalStreet = document.getElementById("finalStreet");
+    const finalPostcode = document.getElementById("finalPostcode");
+    const finalW3W = document.getElementById("finalW3W");
+    const finalTime = document.getElementById("finalTime");
+    const mapScreenshot = document.getElementById("mapScreenshot");
+
+    let locations = [];
     let currentLocation = null;
     let timer;
-    let timeLeft = 300; // 5 minutes in seconds
+    let timeLeft = 300;
+    let elapsedTime = 0;
 
-    // Fetch location data from JSON file
-    async function fetchLocationData() {
-        try {
-            const response = await fetch("filtered_postcodes.json");
-            locationData = await response.json();
+    // Fetch the JSON file
+    fetch("filtered_postcodes.json")
+        .then(response => response.json())
+        .then(data => {
+            locations = data;
+        });
 
-            if (locationData.length === 0) {
-                console.error("JSON file is empty or not loading correctly.");
-                document.getElementById("locationName").textContent = "⚠ No location data available!";
-            } else {
-                console.log("Location data loaded:", locationData);
-            }
-        } catch (error) {
-            console.error("Error loading location data:", error);
-            document.getElementById("locationName").textContent = "⚠ Failed to load location data!";
-        }
-    }
-
-    // Function to start/reset the timer
     function startTimer() {
         clearInterval(timer);
-        timeLeft = 300; // Reset to 5 minutes
-        document.getElementById("timer").textContent = `⏳ Timer: 5:00`;
-        document.getElementById("hint").classList.add("hidden"); // Reset hint visibility
+        timeLeft = 300;
+        elapsedTime = 0;
+        updateTimerDisplay();
 
         timer = setInterval(() => {
             timeLeft--;
+            elapsedTime++;
+            updateTimerDisplay();
 
-            let minutes = Math.floor(timeLeft / 60);
-            let seconds = timeLeft % 60;
-            document.getElementById("timer").textContent = `⏳ Timer: ${minutes}:${seconds.toString().padStart(2, "0")}`;
-
-            if (timeLeft === 120) {
-                document.getElementById("hint").classList.remove("hidden"); // Show hint after 2 mins
+            if (timeLeft === 180) {
+                hintElement.classList.remove("hidden");
             }
 
             if (timeLeft <= 0) {
                 clearInterval(timer);
-                document.getElementById("timer").textContent = "⏳ Time's up!";
+                finishGame(); // Auto-finish when timer runs out
             }
         }, 1000);
     }
 
-    // Generate a random location and reveal only one clue
+    function updateTimerDisplay() {
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+        timerElement.textContent = `⏳ Timer: ${minutes}:${seconds.toString().padStart(2, "0")}`;
+    }
+
     function generateRandomLocation() {
-        if (locationData.length === 0) {
-            console.error("Location data is empty.");
-            document.getElementById("locationName").textContent = "⚠ No location data available!";
-            return;
-        }
+        if (locations.length === 0) return;
 
-        // Select a random location
-        currentLocation = locationData[Math.floor(Math.random() * locationData.length)];
+        const randomIndex = Math.floor(Math.random() * locations.length);
+        currentLocation = locations[randomIndex];
 
-        if (!currentLocation || !currentLocation.street || !currentLocation.postcode) {
-            console.error("Invalid location data:", currentLocation);
-            document.getElementById("locationName").textContent = "⚠ Location data error!";
-            return;
-        }
+        locationName.textContent = `${currentLocation.street}, ${currentLocation.postcode}`;
 
-        // Randomly pick one clue to reveal first (postcode, street, or What3Words)
-        let clues = ["postcode", "street", "w3w"];
-        let initialClue = clues[Math.floor(Math.random() * clues.length)];
+        postcodeElement.textContent = "";
+        streetElement.textContent = "";
+        w3wElement.textContent = "";
 
-        // Hide all details initially
-        document.getElementById("postcode").classList.add("hidden");
-        document.getElementById("street").classList.add("hidden");
-        document.getElementById("w3w").classList.add("hidden");
-        document.getElementById("googleMapsLink").classList.add("hidden");
-        document.getElementById("w3wLink").classList.add("hidden");
-
-        // Populate details but keep them hidden except for the chosen clue
-        document.getElementById("postcode").querySelector("span").textContent = currentLocation.postcode;
-        document.getElementById("street").querySelector("span").textContent = currentLocation.street;
-        document.getElementById("w3w").querySelector("span").textContent = "🔗 Not available"; // Placeholder for W3W data
-
-        // Set up the Google Maps link
-        let mapsUrl = `https://www.google.com/maps?q=${currentLocation.lat},${currentLocation.lon}`;
-        document.getElementById("googleMapsLink").href = mapsUrl;
-
-        // Ensure only one initial clue is shown
-        if (initialClue === "postcode") {
-            document.getElementById("locationName").textContent = `📍 Postcode: ${currentLocation.postcode}`;
-            document.getElementById("postcode").classList.remove("hidden");
-        } else if (initialClue === "street") {
-            document.getElementById("locationName").textContent = `📍 Street: ${currentLocation.street}`;
-            document.getElementById("street").classList.remove("hidden");
-        } else {
-            document.getElementById("locationName").textContent = `📍 What3Words: 🔗 Not available`;
-            document.getElementById("w3w").classList.remove("hidden");
-        }
-
-        // Start the timer
+        hintElement.classList.add("hidden");
         startTimer();
     }
 
-    // Reveal additional details when clicking the buttons
-    function revealData(type) {
-        if (!currentLocation) {
-            console.error("No location selected.");
-            return;
-        }
+    function revealInfo(type) {
+        if (!currentLocation) return;
 
         if (type === "postcode") {
-            document.getElementById("postcode").classList.remove("hidden");
+            postcodeElement.textContent = currentLocation.postcode;
         } else if (type === "street") {
-            document.getElementById("street").classList.remove("hidden");
+            streetElement.textContent = currentLocation.street;
         } else if (type === "w3w") {
-            document.getElementById("w3w").classList.remove("hidden");
+            w3wElement.textContent = "Example.Words.Here"; // Replace with actual What3Words
         }
-
-        // Show Google Maps link
-        document.getElementById("googleMapsLink").classList.remove("hidden");
     }
 
-    // Event Listeners
-    document.getElementById("generateLocation").addEventListener("click", generateRandomLocation);
-    document.querySelectorAll(".reveal-btn").forEach(button => {
-        button.addEventListener("click", function () {
-            revealData(this.getAttribute("data-type"));
-        });
-    });
+    function finishGame() {
+        clearInterval(timer);
 
-    // Load the data
-    fetchLocationData();
+        // Show results
+        finalStreet.textContent = currentLocation.street;
+        finalPostcode.textContent = currentLocation.postcode;
+        finalW3W.textContent = "Example.Words.Here"; // Replace with actual W3W
+
+        // Show time taken
+        const minutesTaken = Math.floor(elapsedTime / 60);
+        const secondsTaken = elapsedTime % 60;
+        finalTime.textContent = `${minutesTaken}:${secondsTaken.toString().padStart(2, "0")}`;
+
+        // Set Google Maps screenshot (use Google Static Maps API)
+        const mapURL = `https://maps.googleapis.com/maps/api/staticmap?center=${currentLocation.lat},${currentLocation.lon}&zoom=15&size=600x300&maptype=roadmap&markers=color:red%7C${currentLocation.lat},${currentLocation.lon}&key=YOUR_GOOGLE_MAPS_API_KEY`;
+        mapScreenshot.src = mapURL;
+
+        // Hide main screen, show results
+        mainScreen.classList.add("hidden");
+        resultScreen.classList.remove("hidden");
+    }
+
+    function restartGame() {
+        resultScreen.classList.add("hidden");
+        mainScreen.classList.remove("hidden");
+        locationName.textContent = "Click the button to generate.";
+        timerElement.textContent = "⏳ Timer: 5:00";
+    }
+
+    generateBtn.addEventListener("click", generateRandomLocation);
+    revealBtns.forEach(button => {
+        button.addEventListener("click", () => revealInfo(button.getAttribute("data-type")));
+    });
+    finishButton.addEventListener("click", finishGame);
+    restartButton.addEventListener("click", restartGame);
 });
