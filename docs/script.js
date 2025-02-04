@@ -14,8 +14,8 @@ async function loadLocationData() {
             "streets-lincolnshire.geojson"
         ];
 
-        const basePath = "https://jwinn346.github.io/Railway-location-finder/docs/";
-        
+        const basePath = "./";  // Since everything is inside docs/, no need for a full URL
+
         const fetchPromises = files.map(file => fetch(basePath + file).then(res => {
             if (!res.ok) {
                 throw new Error(`Failed to load ${file}`);
