@@ -81,10 +81,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (type === "postcode") {
             postcodeElement.textContent = currentLocation.postcode;
+            document.getElementById("postcode").classList.remove("hidden");
         } else if (type === "street") {
             streetElement.textContent = currentLocation.street;
+            document.getElementById("street").classList.remove("hidden");
         } else if (type === "w3w") {
-            w3wElement.textContent = "Example.Words.Here"; // Replace with actual What3Words
+            w3wElement.textContent = "example.words.here"; // Replace with actual What3Words
+            document.getElementById("w3w").classList.remove("hidden");
         }
     }
 
@@ -94,18 +97,17 @@ document.addEventListener("DOMContentLoaded", () => {
         // Show results
         finalStreet.textContent = currentLocation.street;
         finalPostcode.textContent = currentLocation.postcode;
-        finalW3W.textContent = "Example.Words.Here"; // Replace with actual W3W
+        finalW3W.textContent = "example.words.here"; // Replace with actual W3W
 
         // Show time taken
         const minutesTaken = Math.floor(elapsedTime / 60);
         const secondsTaken = elapsedTime % 60;
         finalTime.textContent = `${minutesTaken}:${secondsTaken.toString().padStart(2, "0")}`;
 
-        // Set Google Maps screenshot (use Google Static Maps API)
+        // Set Google Maps screenshot
         const mapURL = `https://maps.googleapis.com/maps/api/staticmap?center=${currentLocation.lat},${currentLocation.lon}&zoom=15&size=600x300&maptype=roadmap&markers=color:red%7C${currentLocation.lat},${currentLocation.lon}&key=YOUR_GOOGLE_MAPS_API_KEY`;
         mapScreenshot.src = mapURL;
 
-        // Hide main screen, show results
         mainScreen.classList.add("hidden");
         resultScreen.classList.remove("hidden");
     }
