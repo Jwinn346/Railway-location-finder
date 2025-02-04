@@ -72,6 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
         w3wElement.textContent = "";
 
         hintElement.classList.add("hidden");
+        finishButton.classList.remove("hidden");
         startTimer();
     }
 
@@ -114,6 +115,7 @@ document.addEventListener("DOMContentLoaded", () => {
         mainScreen.classList.remove("hidden");
         locationName.textContent = "Click the button to generate.";
         timerElement.textContent = "⏳ Timer: 5:00";
+        finishButton.classList.add("hidden");
     }
 
     generateBtn.addEventListener("click", generateRandomLocation);
