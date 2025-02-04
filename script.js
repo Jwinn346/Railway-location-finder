@@ -1,129 +1,78 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const generateBtn = document.getElementById("generateLocation");
-    const revealBtns = document.querySelectorAll(".reveal-btn");
-    const locationName = document.getElementById("locationName");
-    const postcodeElement = document.querySelector("#postcode span");
-    const streetElement = document.querySelector("#street span");
-    const w3wElement = document.querySelector("#w3w span");
-    const timerElement = document.getElementById("timer");
-    const hintElement = document.getElementById("hint");
-    const finishButton = document.getElementById("finishButton");
-    const restartButton = document.getElementById("restartButton");
-    const resultScreen = document.getElementById("resultScreen");
-    const mainScreen = document.getElementById("mainScreen");
+document.addEventListener("DOMContentLoaded", function () {
+    console.log("Script loaded!");
 
-    const finalStreet = document.getElementById("finalStreet");
-    const finalPostcode = document.getElementById("finalPostcode");
-    const finalW3W = document.getElementById("finalW3W");
-    const finalTime = document.getElementById("finalTime");
-    const mapScreenshot = document.getElementById("mapScreenshot");
+    const generateButton = document.getElementById("generateLocation");
+    const revealPostcodeButton = document.getElementById("revealPostcode");
+    const revealStreetButton = document.getElementById("revealStreet");
+    const revealW3WButton = document.getElementById("revealW3W");
 
-    let locations = [];
-    let currentLocation = null;
-    let timer;
-    let timeLeft = 300;
-    let elapsedTime = 0;
+    const postcodeElement = document.getElementById("postcode");
+    const streetElement = document.getElementById("street");
+    const what3wordsElement = document.getElementById("what3words");
 
-    // Fetch the JSON file
-    fetch("filtered_postcodes.json")
-        .then(response => response.json())
-        .then(data => {
-            locations = data;
-        });
+    let locationData = [];
 
-    function startTimer() {
-        clearInterval(timer);
-        timeLeft = 300;
-        elapsedTime = 0;
-        updateTimerDisplay();
+    // JSON files stored in /docs/ for GitHub Pages
+    const jsonPaths = [
+        "docs/railways-london.geojson",
+        "docs/railways-hertfordshire.geojson",
+        "docs/railways-cambridgeshire.geojson",
+        "docs/railways-lincolnshire.geojson"
+    ];
 
-        timer = setInterval(() => {
-            timeLeft--;
-            elapsedTime++;
-            updateTimerDisplay();
+    async function loadLocationData() {
+        console.log("Loading location data...");
+        try {
+            const fetches = jsonPaths.map(path => fetch(path).then(response => response.json()));
+            const results = await Promise.all(fetches);
 
-            if (timeLeft === 180) {
-                hintElement.classList.remove("hidden");
-            }
-
-            if (timeLeft <= 0) {
-                clearInterval(timer);
-                finishGame(); // Auto-finish when timer runs out
-            }
-        }, 1000);
-    }
-
-    function updateTimerDisplay() {
-        const minutes = Math.floor(timeLeft / 60);
-        const seconds = timeLeft % 60;
-        timerElement.textContent = `⏳ Timer: ${minutes}:${seconds.toString().padStart(2, "0")}`;
-    }
-
-    function generateRandomLocation() {
-        if (locations.length === 0) return;
-
-        const randomIndex = Math.floor(Math.random() * locations.length);
-        currentLocation = locations[randomIndex];
-
-        locationName.textContent = `${currentLocation.street}, ${currentLocation.postcode}`;
-
-        postcodeElement.textContent = "";
-        streetElement.textContent = "";
-        w3wElement.textContent = "";
-
-        hintElement.classList.add("hidden");
-        finishButton.classList.remove("hidden");
-        startTimer();
-    }
-
-    function revealInfo(type) {
-        if (!currentLocation) return;
-
-        if (type === "postcode") {
-            postcodeElement.textContent = currentLocation.postcode;
-            document.getElementById("postcode").classList.remove("hidden");
-        } else if (type === "street") {
-            streetElement.textContent = currentLocation.street;
-            document.getElementById("street").classList.remove("hidden");
-        } else if (type === "w3w") {
-            w3wElement.textContent = "example.words.here"; // Replace with actual What3Words
-            document.getElementById("w3w").classList.remove("hidden");
+            locationData = results.flatMap(result => result.features);
+            console.log(`Loaded ${locationData.length} locations.`);
+        } catch (error) {
+            console.error("Error loading JSON files:", error);
         }
     }
 
-    function finishGame() {
-        clearInterval(timer);
-
-        // Show results
-        finalStreet.textContent = currentLocation.street;
-        finalPostcode.textContent = currentLocation.postcode;
-        finalW3W.textContent = "example.words.here"; // Replace with actual W3W
-
-        // Show time taken
-        const minutesTaken = Math.floor(elapsedTime / 60);
-        const secondsTaken = elapsedTime % 60;
-        finalTime.textContent = `${minutesTaken}:${secondsTaken.toString().padStart(2, "0")}`;
-
-        // Set Google Maps screenshot
-        const mapURL = `https://maps.googleapis.com/maps/api/staticmap?center=${currentLocation.lat},${currentLocation.lon}&zoom=15&size=600x300&maptype=roadmap&markers=color:red%7C${currentLocation.lat},${currentLocation.lon}&key=YOUR_GOOGLE_MAPS_API_KEY`;
-        mapScreenshot.src = mapURL;
-
-        mainScreen.classList.add("hidden");
-        resultScreen.classList.remove("hidden");
+    function getRandomLocation() {
+        if (locationData.length === 0) {
+            console.warn("No locations loaded!");
+            return null;
+        }
+        const randomIndex = Math.floor(Math.random() * locationData.length);
+        return locationData[randomIndex];
     }
 
-    function restartGame() {
-        resultScreen.classList.add("hidden");
-        mainScreen.classList.remove("hidden");
-        locationName.textContent = "Click the button to generate.";
-        timerElement.textContent = "⏳ Timer: 5:00";
-        finishButton.classList.add("hidden");
-    }
+    generateButton.addEventListener("click", function () {
+        console.log("Generate button clicked.");
+        const location = getRandomLocation();
+        if (!location) return;
 
-    generateBtn.addEventListener("click", generateRandomLocation);
-    revealBtns.forEach(button => {
-        button.addEventListener("click", () => revealInfo(button.getAttribute("data-type")));
+        postcodeElement.textContent = "Hidden";
+        streetElement.textContent = "Hidden";
+        what3wordsElement.textContent = "Hidden";
+
+        generateButton.dataset.location = JSON.stringify(location);
+        console.log("Generated location:", location);
     });
-    finishButton.addEventListener("click", finishGame);
-    restartButton.addEventListener("click", restartGame);
+
+    revealPostcodeButton.addEventListener("click", function () {
+        console.log("Reveal postcode clicked.");
+        const location = JSON.parse(generateButton.dataset.location || "{}");
+        postcodeElement.textContent = location.properties?.postcode || "No postcode available";
+    });
+
+    revealStreetButton.addEventListener("click", function () {
+        console.log("Reveal street clicked.");
+        const location = JSON.parse(generateButton.dataset.location || "{}");
+        streetElement.textContent = location.properties?.street || "No street available";
+    });
+
+    revealW3WButton.addEventListener("click", function () {
+        console.log("Reveal What3Words clicked.");
+        const location = JSON.parse(generateButton.dataset.location || "{}");
+        what3wordsElement.textContent = location.properties?.what3words || "No W3W available";
+    });
+
+    // Load data when the page is ready
+    loadLocationData();
 });
