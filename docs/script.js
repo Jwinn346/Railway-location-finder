@@ -1,58 +1,73 @@
-document.addEventListener("DOMContentLoaded", function () {
-    const generateBtn = document.getElementById("generate");
-    const revealPostcodeBtn = document.getElementById("revealPostcode");
-    const revealStreetBtn = document.getElementById("revealStreet");
-    const revealW3WBtn = document.getElementById("revealW3W");
+let locations = [];
+let locationLoaded = false;
 
-    const postcodeEl = document.getElementById("postcode");
-    const streetEl = document.getElementById("street");
-    const w3wEl = document.getElementById("w3w");
-    const googleMapsEl = document.getElementById("googleMaps");
-    const what3wordsEl = document.getElementById("what3words");
+// Load railway and street location data
+async function loadLocationData() {
+    try {
+        const railwayLondon = await fetch("https://jwinn346.github.io/Railway-location-finder/docs/railways-london.geojson").then(res => res.json());
+        const railwayHertfordshire = await fetch("https://jwinn346.github.io/Railway-location-finder/docs/railways-hertfordshire.geojson").then(res => res.json());
+        const railwayCambridgeshire = await fetch("https://jwinn346.github.io/Railway-location-finder/docs/railways-cambridgeshire.geojson").then(res => res.json());
+        const railwayLincolnshire = await fetch("https://jwinn346.github.io/Railway-location-finder/docs/railways-lincolnshire.geojson").then(res => res.json());
 
-    let locationData = [];
+        const streetsLondon = await fetch("https://jwinn346.github.io/Railway-location-finder/docs/streets-london.geojson").then(res => res.json());
+        const streetsHertfordshire = await fetch("https://jwinn346.github.io/Railway-location-finder/docs/streets-hertfordshire.geojson").then(res => res.json());
+        const streetsCambridgeshire = await fetch("https://jwinn346.github.io/Railway-location-finder/docs/streets-cambridgeshire.geojson").then(res => res.json());
+        const streetsLincolnshire = await fetch("https://jwinn346.github.io/Railway-location-finder/docs/streets-lincolnshire.geojson").then(res => res.json());
 
-    // ✅ Check if JSON loads
-    fetch("https://jwinn346.github.io/Railway-location-finder/docs/filtered_postcodes.json")
-        .then(response => {
-            if (!response.ok) throw new Error("JSON not found!");
-            return response.json();
-        })
-        .then(data => {
-            console.log("JSON Loaded:", data); // 🔍 Debugging
-            locationData = data;
-        })
-        .catch(error => console.error("Error loading JSON:", error));
+        // Combine all location data
+        locations = [
+            ...railwayLondon.features,
+            ...railwayHertfordshire.features,
+            ...railwayCambridgeshire.features,
+            ...railwayLincolnshire.features,
+            ...streetsLondon.features,
+            ...streetsHertfordshire.features,
+            ...streetsCambridgeshire.features,
+            ...streetsLincolnshire.features
+        ];
 
-    // ✅ Generate Random Location
-    generateBtn.addEventListener("click", function () {
-        if (locationData.length === 0) {
-            alert("Location data is still loading...");
-            return;
-        }
+        console.log("Location data successfully loaded!", locations);
+        locationLoaded = true;
+    } catch (error) {
+        console.error("Error loading location data:", error);
+    }
+}
 
-        const randomLocation = locationData[Math.floor(Math.random() * locationData.length)];
+// Generate a random location
+function generateLocation() {
+    if (!locationLoaded || locations.length === 0) {
+        alert("Location data is still loading...");
+        return;
+    }
 
-        postcodeEl.innerText = "Hidden";
-        streetEl.innerText = "Hidden";
-        w3wEl.innerText = "Hidden";
+    const randomIndex = Math.floor(Math.random() * locations.length);
+    const location = locations[randomIndex];
+    displayLocation(location);
+}
 
-        googleMapsEl.href = `https://www.google.com/maps?q=${randomLocation.lat},${randomLocation.lon}`;
-        what3wordsEl.href = `https://what3words.com/${randomLocation.w3w}`;
-    });
+// Display location details
+function displayLocation(location) {
+    const properties = location.properties || {};
+    document.getElementById("postcode").textContent = properties.postcode || "Unknown";
+    document.getElementById("street").textContent = properties.street || "Unknown";
+    document.getElementById("what3words").textContent = properties.what3words || "Unknown";
 
-    // ✅ Reveal Postcode
-    revealPostcodeBtn.addEventListener("click", function () {
-        postcodeEl.innerText = locationData.length > 0 ? locationData[0].postcode : "N/A";
-    });
+    // Update Google Maps and What3Words links
+    if (properties.latitude && properties.longitude) {
+        document.getElementById("google-maps-link").href = `https://www.google.com/maps?q=${properties.latitude},${properties.longitude}`;
+    } else {
+        document.getElementById("google-maps-link").href = "#";
+    }
 
-    // ✅ Reveal Street Name
-    revealStreetBtn.addEventListener("click", function () {
-        streetEl.innerText = locationData.length > 0 ? locationData[0].street : "N/A";
-    });
+    if (properties.what3words) {
+        document.getElementById("what3words-link").href = `https://what3words.com/${properties.what3words}`;
+    } else {
+        document.getElementById("what3words-link").href = "#";
+    }
+}
 
-    // ✅ Reveal What3Words
-    revealW3WBtn.addEventListener("click", function () {
-        w3wEl.innerText = locationData.length > 0 ? locationData[0].w3w : "N/A";
-    });
-});
+// Event listeners
+document.getElementById("generate-btn").addEventListener("click", generateLocation);
+
+// Load data on page load
+window.onload = loadLocationData;
