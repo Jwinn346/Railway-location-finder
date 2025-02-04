@@ -1,42 +1,48 @@
 let locations = [];
 let locationLoaded = false;
 
-// Load railway and street location data
 async function loadLocationData() {
     try {
-        const railwayLondon = await fetch("https://jwinn346.github.io/Railway-location-finder/docs/railways-london.geojson").then(res => res.json());
-        const railwayHertfordshire = await fetch("https://jwinn346.github.io/Railway-location-finder/docs/railways-hertfordshire.geojson").then(res => res.json());
-        const railwayCambridgeshire = await fetch("https://jwinn346.github.io/Railway-location-finder/docs/railways-cambridgeshire.geojson").then(res => res.json());
-        const railwayLincolnshire = await fetch("https://jwinn346.github.io/Railway-location-finder/docs/railways-lincolnshire.geojson").then(res => res.json());
-
-        const streetsLondon = await fetch("https://jwinn346.github.io/Railway-location-finder/docs/streets-london.geojson").then(res => res.json());
-        const streetsHertfordshire = await fetch("https://jwinn346.github.io/Railway-location-finder/docs/streets-hertfordshire.geojson").then(res => res.json());
-        const streetsCambridgeshire = await fetch("https://jwinn346.github.io/Railway-location-finder/docs/streets-cambridgeshire.geojson").then(res => res.json());
-        const streetsLincolnshire = await fetch("https://jwinn346.github.io/Railway-location-finder/docs/streets-lincolnshire.geojson").then(res => res.json());
-
-        // Combine all location data
-        locations = [
-            ...railwayLondon.features,
-            ...railwayHertfordshire.features,
-            ...railwayCambridgeshire.features,
-            ...railwayLincolnshire.features,
-            ...streetsLondon.features,
-            ...streetsHertfordshire.features,
-            ...streetsCambridgeshire.features,
-            ...streetsLincolnshire.features
+        const files = [
+            "railways-london.geojson",
+            "railways-hertfordshire.geojson",
+            "railways-cambridgeshire.geojson",
+            "railways-lincolnshire.geojson",
+            "streets-london.geojson",
+            "streets-hertfordshire.geojson",
+            "streets-cambridgeshire.geojson",
+            "streets-lincolnshire.geojson"
         ];
 
-        console.log("Location data successfully loaded!", locations);
+        const basePath = "https://jwinn346.github.io/Railway-location-finder/docs/";
+        
+        const fetchPromises = files.map(file => fetch(basePath + file).then(res => {
+            if (!res.ok) {
+                throw new Error(`Failed to load ${file}`);
+            }
+            return res.json();
+        }));
+
+        const results = await Promise.all(fetchPromises);
+
+        locations = results.flatMap(data => data.features || []);
+
+        if (locations.length === 0) {
+            throw new Error("No locations found in JSON files.");
+        }
+
+        console.log("✅ Location data successfully loaded!", locations);
         locationLoaded = true;
     } catch (error) {
-        console.error("Error loading location data:", error);
+        console.error("❌ Error loading location data:", error);
+        alert("Error loading location data. Check console for details.");
     }
 }
 
 // Generate a random location
 function generateLocation() {
     if (!locationLoaded || locations.length === 0) {
-        alert("Location data is still loading...");
+        alert("⚠️ Location data is still loading...");
         return;
     }
 
