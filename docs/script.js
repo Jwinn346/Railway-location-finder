@@ -12,8 +12,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     let locationData = [];
 
-    // ✅ Load JSON File
-    fetch("filtered_postcodes.json") // JSON must be in docs/
+    // ✅ Load JSON File from /docs/
+    fetch("filtered_postcodes.json") // Make sure JSON is in /docs/
         .then(response => response.json())
         .then(data => {
             locationData = data;
