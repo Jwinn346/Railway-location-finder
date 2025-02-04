@@ -1,59 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>East Coast South Location Generator</title>
-    <link rel="stylesheet" href="styles.css">
-    <script defer src="script.js"></script>
-</head>
-<body>
+<button id="generateLocation">Generate Random Location</button>
+<button id="revealPostcode">Reveal Postcode</button>
+<button id="revealStreet">Reveal Street Name</button>
+<button id="revealW3W">Reveal What3Words</button>
 
-    <header>
-        <h1>East Coast South Location Generator</h1>
-    </header>
-
-    <main id="mainScreen">
-        <button id="generateLocation">Generate Random Location</button>
-
-        <p id="timer">⏳ Timer: 5:00</p>
-        <p id="hint" class="hidden">🔎 Hint: Will appear after 2 minutes...</p>
-
-        <div id="locationContainer">
-            <p><strong>Location:</strong> <span id="locationName">Click the button to generate.</span></p>
-
-            <button class="reveal-btn" data-type="postcode">Reveal Postcode</button>
-            <button class="reveal-btn" data-type="street">Reveal Street Name</button>
-            <button class="reveal-btn" data-type="w3w">Reveal What3Words</button>
-
-            <p id="postcode" class="hidden"><strong>Postcode:</strong> <span></span></p>
-            <p id="street" class="hidden"><strong>Street:</strong> <span></span></p>
-            <p id="w3w" class="hidden"><strong>What3Words:</strong> <span></span></p>
-
-            <a id="googleMapsLink" href="#" target="_blank" class="hidden">View on Google Maps</a>
-            <a id="w3wLink" href="#" target="_blank" class="hidden">View on What3Words</a>
-
-            <button id="finishButton" class="hidden">Finish</button>
-        </div>
-    </main>
-
-    <!-- Result Screen (Hidden Until Finish) -->
-    <div id="resultScreen" class="hidden">
-        <h2>Final Answer</h2>
-        <p><strong>Street:</strong> <span id="finalStreet"></span></p>
-        <p><strong>Postcode:</strong> <span id="finalPostcode"></span></p>
-        <p><strong>What3Words:</strong> <span id="finalW3W"></span></p>
-        <p><strong>Time Taken:</strong> <span id="finalTime"></span></p>
-
-        <img id="mapScreenshot" src="" alt="Google Maps Screenshot">
-
-        <button id="restartButton">Restart</button>
-    </div>
-
-    <footer>
-        <a href="admin.html">Admin Login</a>
-    </footer>
-
-</body>
-</html>
-
+<p>Postcode: <span id="postcode"></span></p>
+<p>Street: <span id="street"></span></p>
+<p>What3Words: <span id="what3words"></span></p>
