@@ -7,10 +7,15 @@ async function loadLocationData() {
             "railways-london.geojson",
             "railways-hertfordshire.geojson",
             "railways-cambridgeshire.geojson",
-            "railways-lincolnshire.geojson"
+            "railways-lincolnshire.geojson",
+            "streets-london.geojson",
+            "streets-hertfordshire.geojson",
+            "streets-cambridgeshire.geojson",
+            "streets-lincolnshire.geojson"
         ];
 
-        const basePath = "https://jwinn346.github.io/Railway-location-finder/docs/";
+        // ✅ Updated basePath (removes /docs/)
+        const basePath = "https://jwinn346.github.io/Railway-location-finder/";
 
         const fetchPromises = files.map(file => fetch(basePath + file).then(res => {
             if (!res.ok) {
@@ -27,11 +32,11 @@ async function loadLocationData() {
             throw new Error("No locations found in JSON files.");
         }
 
-        console.log("✅ Railway location data successfully loaded!", locations);
+        console.log("✅ Location data successfully loaded!", locations);
         locationLoaded = true;
     } catch (error) {
         console.error("❌ Error loading railway location data:", error);
-        alert("Error loading railway location data. Check console for details.");
+        alert("Error loading location data. Check console for details.");
     }
 }
 
@@ -54,6 +59,7 @@ function displayLocation(location) {
     document.getElementById("street").textContent = properties.street || "Unknown";
     document.getElementById("what3words").textContent = properties.what3words || "Unknown";
 
+    // Update Google Maps and What3Words links
     if (properties.latitude && properties.longitude) {
         document.getElementById("google-maps-link").href = `https://www.google.com/maps?q=${properties.latitude},${properties.longitude}`;
     } else {
@@ -67,5 +73,8 @@ function displayLocation(location) {
     }
 }
 
+// Event listeners
 document.getElementById("generate-btn").addEventListener("click", generateLocation);
+
+// Load data on page load
 window.onload = loadLocationData;
