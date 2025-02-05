@@ -7,15 +7,11 @@ async function loadLocationData() {
             "railways-london.geojson",
             "railways-hertfordshire.geojson",
             "railways-cambridgeshire.geojson",
-            "railways-lincolnshire.geojson",
-            "streets-london.geojson",
-            "streets-hertfordshire.geojson",
-            "streets-cambridgeshire.geojson",
-            "streets-lincolnshire.geojson"
-        ]; 
+            "railways-lincolnshire.geojson"
+        ];
 
-        // ✅ Use `/docs/` in the path
-        const basePath = "https://jwinn346.github.io/Railway-location-finder/docs/";
+        // ✅ Ensure we load from the correct GitHub Pages path
+        const basePath = "https://jwinn346.github.io/Railway-location-finder/";
 
         const fetchPromises = files.map(file => fetch(basePath + file).then(res => {
             if (!res.ok) {
@@ -26,24 +22,25 @@ async function loadLocationData() {
 
         const results = await Promise.all(fetchPromises);
 
+        // ✅ Flatten all railway features into one array
         locations = results.flatMap(data => data.features || []);
 
         if (locations.length === 0) {
-            throw new Error("No locations found in JSON files.");
+            throw new Error("No locations found in railway JSON files.");
         }
 
-        console.log("✅ Location data successfully loaded!", locations);
+        console.log("✅ Railway location data successfully loaded!", locations);
         locationLoaded = true;
     } catch (error) {
         console.error("❌ Error loading railway location data:", error);
-        alert("Error loading location data. Check console for details.");
+        alert("Error loading railway location data. Check console for details.");
     }
 }
 
-// Generate a random location
+// Generate a random railway location
 function generateLocation() {
     if (!locationLoaded || locations.length === 0) {
-        alert("⚠️ Location data is still loading...");
+        alert("⚠️ Railway location data is still loading...");
         return;
     }
 
@@ -52,7 +49,7 @@ function generateLocation() {
     displayLocation(location);
 }
 
-// Display location details
+// Display railway location details
 function displayLocation(location) {
     const properties = location.properties || {};
     document.getElementById("postcode").textContent = properties.postcode || "Unknown";
@@ -76,5 +73,5 @@ function displayLocation(location) {
 // Event listeners
 document.getElementById("generate-btn").addEventListener("click", generateLocation);
 
-// Load data on page load
+// Load railway data on page load
 window.onload = loadLocationData;
