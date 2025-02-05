@@ -4,13 +4,13 @@ let locationLoaded = false;
 async function loadLocationData() {
     try {
         const files = [
-            "docs/railways-london.geojson",
-            "docs/railways-hertfordshire.geojson",
-            "docs/railways-cambridgeshire.geojson",
-            "docs/railways-lincolnshire.geojson"
+            "railways-london.geojson",
+            "railways-hertfordshire.geojson",
+            "railways-cambridgeshire.geojson",
+            "railways-lincolnshire.geojson"
         ];
 
-        const basePath = "https://jwinn346.github.io/Railway-location-finder/";
+        const basePath = "https://jwinn346.github.io/Railway-location-finder/docs/";
 
         const fetchPromises = files.map(file => fetch(basePath + file).then(res => {
             if (!res.ok) {
@@ -35,6 +35,7 @@ async function loadLocationData() {
     }
 }
 
+// Generate a random location
 function generateLocation() {
     if (!locationLoaded || locations.length === 0) {
         alert("⚠️ Location data is still loading...");
@@ -46,6 +47,7 @@ function generateLocation() {
     displayLocation(location);
 }
 
+// Display location details
 function displayLocation(location) {
     const properties = location.properties || {};
     document.getElementById("postcode").textContent = properties.postcode || "Unknown";
