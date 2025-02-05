@@ -4,11 +4,11 @@ let locationLoaded = false;
 async function loadLocationData() {
     try {
         const files = [
-            "railways-london.json",
-            "railways-hertfordshire.json",
-            "railways-cambridgeshire.json",
-            "railways-lincolnshire.json"
-        ];
+    "railways-london.geojson",
+    "railways-hertfordshire.geojson",
+    "railways-cambridgeshire.geojson",
+    "railways-lincolnshire.geojson"
+];
 
         const basePath = "https://jwinn346.github.io/Railway-location-finder/docs/";
         
