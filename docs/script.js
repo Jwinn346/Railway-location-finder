@@ -4,18 +4,18 @@ let locationLoaded = false;
 async function loadLocationData() {
     try {
         const files = [
-            "railways-london.geojson",
-            "railways-hertfordshire.geojson",
-            "railways-cambridgeshire.geojson",
-            "railways-lincolnshire.geojson",
-            "streets-london.geojson",
-            "streets-hertfordshire.geojson",
-            "streets-cambridgeshire.geojson",
-            "streets-lincolnshire.geojson"
+            "railways-london.json",
+            "railways-hertfordshire.json",
+            "railways-cambridgeshire.json",
+            "railways-lincolnshire.json",
+            "streets-london.json",
+            "streets-hertfordshire.json",
+            "streets-cambridgeshire.json",
+            "streets-lincolnshire.json"
         ];
 
-        const basePath = "./";  // Since everything is inside docs/, no need for a full URL
-
+        const basePath = "https://jwinn346.github.io/Railway-location-finder/docs/";
+        
         const fetchPromises = files.map(file => fetch(basePath + file).then(res => {
             if (!res.ok) {
                 throw new Error(`Failed to load ${file}`);
@@ -24,7 +24,6 @@ async function loadLocationData() {
         }));
 
         const results = await Promise.all(fetchPromises);
-
         locations = results.flatMap(data => data.features || []);
 
         if (locations.length === 0) {
@@ -61,14 +60,18 @@ function displayLocation(location) {
     // Update Google Maps and What3Words links
     if (properties.latitude && properties.longitude) {
         document.getElementById("google-maps-link").href = `https://www.google.com/maps?q=${properties.latitude},${properties.longitude}`;
+        document.getElementById("google-maps-link").textContent = "View on Google Maps";
     } else {
         document.getElementById("google-maps-link").href = "#";
+        document.getElementById("google-maps-link").textContent = "";
     }
 
     if (properties.what3words) {
         document.getElementById("what3words-link").href = `https://what3words.com/${properties.what3words}`;
+        document.getElementById("what3words-link").textContent = "View on What3Words";
     } else {
         document.getElementById("what3words-link").href = "#";
+        document.getElementById("what3words-link").textContent = "";
     }
 }
 
