@@ -1,5 +1,6 @@
 let locations = [];
 let locationLoaded = false;
+let hintTimeout;
 
 async function loadLocationData() {
     try {
@@ -10,7 +11,6 @@ async function loadLocationData() {
             "railways-lincolnshire.geojson"
         ];
 
-        // ✅ Correct basePath pointing to docs/
         const basePath = "https://jwinn346.github.io/Railway-location-finder/docs/";
 
         const fetchPromises = files.map(file => fetch(basePath + file).then(res => {
@@ -22,7 +22,7 @@ async function loadLocationData() {
 
         const results = await Promise.all(fetchPromises);
 
-        // ✅ Flatten all railway features into one array
+        // ✅ Extract railway features
         locations = results.flatMap(data => data.features || []);
 
         if (locations.length === 0) {
@@ -37,7 +37,7 @@ async function loadLocationData() {
     }
 }
 
-// Generate a random railway location
+// ✅ Generate a random railway location
 function generateLocation() {
     if (!locationLoaded || locations.length === 0) {
         alert("⚠️ Railway location data is still loading...");
@@ -47,31 +47,44 @@ function generateLocation() {
     const randomIndex = Math.floor(Math.random() * locations.length);
     const location = locations[randomIndex];
     displayLocation(location);
+
+    // ✅ Start hint timer
+    startHintTimer(location);
 }
 
-// Display railway location details
+// ✅ Display railway location details
 function displayLocation(location) {
     const properties = location.properties || {};
-    document.getElementById("postcode").textContent = properties.postcode || "Unknown";
-    document.getElementById("street").textContent = properties.street || "Unknown";
-    document.getElementById("what3words").textContent = properties.what3words || "Unknown";
+    const coordinates = location.geometry?.coordinates || [];
 
-    // Update Google Maps and What3Words links
-    if (properties.latitude && properties.longitude) {
-        document.getElementById("google-maps-link").href = `https://www.google.com/maps?q=${properties.latitude},${properties.longitude}`;
+    document.getElementById("location-name").textContent = properties.name || "Unknown Railway Line";
+    document.getElementById("osm-id").textContent = properties.osm_id || "Unknown ID";
+    document.getElementById("other-tags").textContent = properties.other_tags || "No additional data";
+
+    // ✅ Update Google Maps link if coordinates exist
+    if (coordinates.length > 0) {
+        const [longitude, latitude] = coordinates[0]; // Take the first coordinate point
+        document.getElementById("google-maps-link").href = `https://www.google.com/maps?q=${latitude},${longitude}`;
     } else {
         document.getElementById("google-maps-link").href = "#";
     }
-
-    if (properties.what3words) {
-        document.getElementById("what3words-link").href = `https://what3words.com/${properties.what3words}`;
-    } else {
-        document.getElementById("what3words-link").href = "#";
-    }
 }
 
-// Event listeners
+// ✅ Timer function for hints
+function startHintTimer(location) {
+    clearTimeout(hintTimeout); // Clear any existing hint timer
+    let hintGiven = false;
+
+    hintTimeout = setTimeout(() => {
+        if (!hintGiven) {
+            document.getElementById("hint").textContent = `Hint: The railway line name starts with '${location.properties.name?.charAt(0) || "?"}'`;
+            hintGiven = true;
+        }
+    }, 2000); // Hint appears after 2 seconds
+}
+
+// ✅ Event Listeners
 document.getElementById("generate-btn").addEventListener("click", generateLocation);
 
-// Load railway data on page load
+// ✅ Load railway data on page load
 window.onload = loadLocationData;
