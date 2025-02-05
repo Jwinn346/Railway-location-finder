@@ -7,11 +7,7 @@ async function loadLocationData() {
             "railways-london.json",
             "railways-hertfordshire.json",
             "railways-cambridgeshire.json",
-            "railways-lincolnshire.json",
-            "streets-london.json",
-            "streets-hertfordshire.json",
-            "streets-cambridgeshire.json",
-            "streets-lincolnshire.json"
+            "railways-lincolnshire.json"
         ];
 
         const basePath = "https://jwinn346.github.io/Railway-location-finder/docs/";
@@ -30,11 +26,11 @@ async function loadLocationData() {
             throw new Error("No locations found in JSON files.");
         }
 
-        console.log("✅ Location data successfully loaded!", locations);
+        console.log("✅ Railway data successfully loaded!", locations);
         locationLoaded = true;
     } catch (error) {
-        console.error("❌ Error loading location data:", error);
-        alert("Error loading location data. Check console for details.");
+        console.error("❌ Error loading railway location data:", error);
+        alert("Error loading railway location data. Check console for details.");
     }
 }
 
