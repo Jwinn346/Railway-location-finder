@@ -10,8 +10,8 @@ async function loadLocationData() {
             "railways-lincolnshire.geojson"
         ];
 
-        // ✅ Ensure we load from the correct GitHub Pages path
-        const basePath = "https://jwinn346.github.io/Railway-location-finder/";
+        // ✅ Correct basePath pointing to docs/
+        const basePath = "https://jwinn346.github.io/Railway-location-finder/docs/";
 
         const fetchPromises = files.map(file => fetch(basePath + file).then(res => {
             if (!res.ok) {
