@@ -12,9 +12,9 @@ async function loadLocationData() {
             "streets-hertfordshire.geojson",
             "streets-cambridgeshire.geojson",
             "streets-lincolnshire.geojson"
-        ];
+        ]; 
 
-        // ✅ Updated basePath (removes /docs/)
+        // ✅ Use base path without "/docs/"
         const basePath = "https://jwinn346.github.io/Railway-location-finder/";
 
         const fetchPromises = files.map(file => fetch(basePath + file).then(res => {
