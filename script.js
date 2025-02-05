@@ -5,10 +5,10 @@ let hintTimeout;
 async function loadLocationData() {
     try {
         const files = [
-            "railways-london.geojson",
-            "railways-hertfordshire.geojson",
-            "railways-cambridgeshire.geojson",
-            "railways-lincolnshire.geojson"
+            "streets-london.geojson",
+            "streets-hertfordshire.geojson",
+            "streets-cambridgeshire.geojson",
+            "streets-lincolnshire.geojson"
         ];
 
         const basePath = "https://jwinn346.github.io/Railway-location-finder/docs/";
@@ -22,25 +22,25 @@ async function loadLocationData() {
 
         const results = await Promise.all(fetchPromises);
 
-        // ✅ Extract railway features
+        // ✅ Flatten street features into one array
         locations = results.flatMap(data => data.features || []);
 
         if (locations.length === 0) {
-            throw new Error("No locations found in railway JSON files.");
+            throw new Error("No locations found in street JSON files.");
         }
 
-        console.log("✅ Railway location data successfully loaded!", locations);
+        console.log("✅ Street location data successfully loaded!", locations);
         locationLoaded = true;
     } catch (error) {
-        console.error("❌ Error loading railway location data:", error);
-        alert("Error loading railway location data. Check console for details.");
+        console.error("❌ Error loading street location data:", error);
+        alert("Error loading street location data. Check console for details.");
     }
 }
 
-// ✅ Generate a random railway location
+// ✅ Generate a random street location
 function generateLocation() {
     if (!locationLoaded || locations.length === 0) {
-        alert("⚠️ Railway location data is still loading...");
+        alert("⚠️ Street location data is still loading...");
         return;
     }
 
@@ -52,14 +52,14 @@ function generateLocation() {
     startHintTimer(location);
 }
 
-// ✅ Display railway location details
+// ✅ Display street location details
 function displayLocation(location) {
     const properties = location.properties || {};
     const coordinates = location.geometry?.coordinates || [];
 
-    document.getElementById("location-name").textContent = properties.name || "Unknown Railway Line";
-    document.getElementById("osm-id").textContent = properties.osm_id || "Unknown ID";
-    document.getElementById("other-tags").textContent = properties.other_tags || "No additional data";
+    document.getElementById("street-name").textContent = properties.name || "Unknown Street";
+    document.getElementById("postcode").textContent = properties.postcode || "Unknown Postcode";
+    document.getElementById("what3words").textContent = properties.what3words || "Unknown What3Words";
 
     // ✅ Update Google Maps link if coordinates exist
     if (coordinates.length > 0) {
@@ -77,7 +77,7 @@ function startHintTimer(location) {
 
     hintTimeout = setTimeout(() => {
         if (!hintGiven) {
-            document.getElementById("hint").textContent = `Hint: The railway line name starts with '${location.properties.name?.charAt(0) || "?"}'`;
+            document.getElementById("hint").textContent = `Hint: The street name starts with '${location.properties.name?.charAt(0) || "?"}'`;
             hintGiven = true;
         }
     }, 2000); // Hint appears after 2 seconds
@@ -85,6 +85,9 @@ function startHintTimer(location) {
 
 // ✅ Event Listeners
 document.getElementById("generate-btn").addEventListener("click", generateLocation);
+document.getElementById("finish-btn").addEventListener("click", () => {
+    alert("Training session complete.");
+});
 
-// ✅ Load railway data on page load
+// ✅ Load street data on page load
 window.onload = loadLocationData;
