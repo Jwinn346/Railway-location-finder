@@ -18,7 +18,7 @@ async function loadLocationData() {
             "streets-lincolnshire-part-ab.geojson"
         ];
 
-        // ✅ Load JSON from the `json-storage` branch on GitHub
+        // ✅ Corrected GitHub Raw URL (uses json-storage branch)
         const basePath = "https://raw.githubusercontent.com/jwinn346/Railway-location-finder/json-storage/docs/";
 
         const fetchPromises = files.map(file =>
@@ -39,21 +39,21 @@ async function loadLocationData() {
             .flatMap(data => data.features || []);
 
         if (locations.length === 0) {
-            throw new Error("No locations found in railway or street JSON files.");
+            throw new Error("No locations found in JSON files.");
         }
 
         console.log("✅ Location data successfully loaded!", locations);
         locationLoaded = true;
     } catch (error) {
-        console.error("❌ Error loading railway location data:", error);
-        alert("Error loading railway location data. Check console for details.");
+        console.error("❌ Error loading location data:", error);
+        alert("Error loading location data. Check console for details.");
     }
 }
 
 // Generate a random location
 function generateLocation() {
     if (!locationLoaded || locations.length === 0) {
-        alert("⚠️ Railway location data is still loading...");
+        alert("⚠️ Location data is still loading...");
         return;
     }
 
