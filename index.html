@@ -7,20 +7,18 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Railway Location Finder</h1>
-    <button id="generate-btn">Generate Location</button>
-    <p id="location-display">Press 'Generate Location' to start.</p>
+    <div class="container">
+        <h1>🚆 Railway Location Finder</h1>
+        <p>Press 'Generate Location' to start.</p>
 
-    <button id="reveal-street">Reveal Street</button>
-    <p id="street-display"></p>
+        <div id="timer">Time left: 5:00</div>
 
-    <button id="reveal-postcode">Reveal Postcode</button>
-    <p id="postcode-display"></p>
+        <button id="generate-btn">🎲 Generate Location</button>
+        <button id="reveal-btn" style="display:none;">🔍 Reveal Details</button>
+        <button id="finish-btn" style="display:none;">✅ Finish</button>
 
-    <button id="reveal-w3w">Reveal What3Words</button>
-    <p id="w3w-display"></p>
-
-    <button id="finish-btn">Finish</button>
+        <div id="location-display">📍 Location will appear here.</div>
+    </div>
 
     <script src="script.js"></script>
 </body>
