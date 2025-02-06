@@ -8,35 +8,41 @@ async function loadLocationData() {
             "railways-hertfordshire.geojson",
             "railways-cambridgeshire.geojson",
             "railways-lincolnshire.geojson",
-            "streets-london-part-aa.geojson",
-            "streets-london-part-ab.geojson",
             "streets-cambridgeshire-part-aa.geojson",
             "streets-cambridgeshire-part-ab.geojson",
+            "streets-cambridgeshire-part-ac.geojson",
+            "streets-cambridgeshire-part-ad.geojson",
             "streets-hertfordshire-part-aa.geojson",
             "streets-hertfordshire-part-ab.geojson",
             "streets-lincolnshire-part-aa.geojson",
-            "streets-lincolnshire-part-ab.geojson"
+            "streets-lincolnshire-part-ab.geojson",
+            "streets-london-part-aa.geojson",
+            "streets-london-part-ab.geojson",
+            "streets-london-part-ac.geojson"
         ];
 
-        // ✅ Corrected GitHub Raw URL (uses json-storage branch)
+        // ✅ Ensure we load from the correct GitHub Pages URL (raw JSON format)
         const basePath = "https://raw.githubusercontent.com/jwinn346/Railway-location-finder/json-storage/docs/";
 
         const fetchPromises = files.map(file =>
             fetch(basePath + file)
                 .then(res => {
                     if (!res.ok) {
-                        console.warn(`❌ Failed to load ${file}`);
+                        console.error(`Failed to load ${file}`);
                         return null;
                     }
                     return res.json();
+                })
+                .catch(err => {
+                    console.error(`Error loading ${file}:`, err);
+                    return null;
                 })
         );
 
         const results = await Promise.all(fetchPromises);
 
-        locations = results
-            .filter(data => data !== null) // Remove failed loads
-            .flatMap(data => data.features || []);
+        // ✅ Flatten all location data and remove any failed loads (nulls)
+        locations = results.flatMap(data => (data ? data.features : []));
 
         if (locations.length === 0) {
             throw new Error("No locations found in JSON files.");
@@ -50,7 +56,7 @@ async function loadLocationData() {
     }
 }
 
-// Generate a random location
+// Generate a random railway location
 function generateLocation() {
     if (!locationLoaded || locations.length === 0) {
         alert("⚠️ Location data is still loading...");
