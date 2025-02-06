@@ -3,35 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>East Coast South Location Generator</title>
+    <title>Railway Location Finder</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
-    <h1>East Coast South Location Generator</h1>
-
-    <button id="generate-btn">Generate Random Location</button>
-
-    <p><strong>Postcode:</strong> <span id="postcode">Loading...</span></p>
-    <p><strong>Street:</strong> <span id="street">Loading...</span></p>
-    <p><strong>What3Words:</strong> <span id="what3words">Loading...</span></p>
-    <p><strong>Railway Line Name:</strong> <span id="railway-line">Loading...</span></p>
-    <p><strong>OSM ID:</strong> <span id="osm-id">Loading...</span></p>
-    <p><strong>Additional Tags:</strong> <span id="tags">Loading...</span></p>
-
-    <p>
-        <a id="google-maps-link" href="#" target="_blank">View on Google Maps</a> |
-        <a id="what3words-link" href="#" target="_blank">View on What3Words</a>
-    </p>
-
-    <!-- Timer Section -->
-    <div id="timer-container">
-        <p><strong>Time Remaining:</strong> <span id="timer">5:00</span></p>
-        <button id="hint-btn" disabled>Show Hint</button>
-        <button id="finish-btn" disabled>Finish</button>
+    <h1>Railway Location Finder</h1>
+    
+    <button id="generateButton">Generate Location</button>
+    
+    <div id="locationContainer">
+        <p><strong>Postcode:</strong> <span id="postcode">Loading...</span></p>
+        <p><strong>Street Name:</strong> <span id="street">Loading...</span></p>
+        <p><strong>What3Words:</strong> <span id="w3w">Loading...</span></p>
     </div>
 
     <script src="script.js"></script>
-
 </body>
 </html>
