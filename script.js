@@ -11,28 +11,44 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let timer, secondsElapsed = 0, points = 0;
     let currentLocation = {};
+    let allLocations = [];
 
-    // Load GeoJSON files
+    // Load GeoJSON files safely
     async function loadLocationData() {
         try {
-            const railwayData = await fetch("docs/railways-london.geojson").then(res => res.json());
-            const streetData = await fetch("docs/streets-london-part-aa.geojson").then(res => res.json());
-            return [...railwayData.features, ...streetData.features];
+            const files = [
+                "docs/railways-london.geojson",
+                "docs/streets-london-part-aa.geojson",
+                "docs/streets-cambridgeshire-part-aa.geojson"
+            ];
+
+            const results = await Promise.allSettled(files.map(file => fetch(file).then(res => res.json())));
+            results.forEach((result, index) => {
+                if (result.status === "fulfilled") {
+                    allLocations = allLocations.concat(result.value.features || []);
+                } else {
+                    console.warn(`⚠️ Warning: Failed to load ${files[index]}`);
+                }
+            });
+
+            if (allLocations.length === 0) {
+                throw new Error("No valid locations found in GeoJSON files.");
+            }
+
+            console.log("✅ Location data successfully loaded!", allLocations.length);
         } catch (error) {
             console.error("❌ Error loading location data:", error);
             locationDisplay.textContent = "Error loading location data.";
-            return [];
         }
     }
 
     async function generateLocation() {
-        const locations = await loadLocationData();
-        if (!locations.length) {
+        if (allLocations.length === 0) {
             locationDisplay.textContent = "No locations available.";
             return;
         }
 
-        const randomLocation = locations[Math.floor(Math.random() * locations.length)];
+        const randomLocation = allLocations[Math.floor(Math.random() * allLocations.length)];
         currentLocation = {
             type: randomLocation.properties.type || "Unknown",
             postcode: randomLocation.properties.postcode || "N/A",
@@ -75,4 +91,6 @@ document.addEventListener("DOMContentLoaded", () => {
     revealStreetButton.addEventListener("click", () => revealDetail("street"));
     revealWhat3WordsButton.addEventListener("click", () => revealDetail("what3words"));
     finishButton.addEventListener("click", finishExercise);
+
+    loadLocationData();
 });
