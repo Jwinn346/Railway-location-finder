@@ -9,40 +9,32 @@ async function loadLocationData() {
             "railways-cambridgeshire.geojson",
             "railways-lincolnshire.geojson",
             "streets-cambridgeshire-part-aa.geojson",
-            "streets-cambridgeshire-part-ab.geojson",
-            "streets-cambridgeshire-part-ac.geojson",
-            "streets-cambridgeshire-part-ad.geojson",
             "streets-hertfordshire-part-aa.geojson",
-            "streets-hertfordshire-part-ab.geojson",
             "streets-lincolnshire-part-aa.geojson",
-            "streets-lincolnshire-part-ab.geojson",
-            "streets-london-part-aa.geojson",
-            "streets-london-part-ab.geojson",
-            "streets-london-part-ac.geojson"
+            "streets-london-part-aa.geojson"
         ];
 
-        // ✅ Ensure we load from the correct GitHub Pages URL (raw JSON format)
+        // ✅ Use Raw GitHub URLs
         const basePath = "https://raw.githubusercontent.com/jwinn346/Railway-location-finder/json-storage/docs/";
 
-        const fetchPromises = files.map(file =>
+        const fetchPromises = files.map(file => 
             fetch(basePath + file)
                 .then(res => {
-                    if (!res.ok) {
-                        console.error(`Failed to load ${file}`);
-                        return null;
-                    }
+                    if (!res.ok) throw new Error(`Failed to load ${file}`);
                     return res.json();
                 })
-                .catch(err => {
-                    console.error(`Error loading ${file}:`, err);
-                    return null;
+                .catch(error => {
+                    console.error(`Failed to load ${file}`, error);
+                    return null;  // Skip this file if it fails
                 })
         );
 
         const results = await Promise.all(fetchPromises);
 
-        // ✅ Flatten all location data and remove any failed loads (nulls)
-        locations = results.flatMap(data => (data ? data.features : []));
+        // ✅ Filter out any failed loads
+        locations = results
+            .filter(data => data && data.features)
+            .flatMap(data => data.features);
 
         if (locations.length === 0) {
             throw new Error("No locations found in JSON files.");
@@ -56,7 +48,7 @@ async function loadLocationData() {
     }
 }
 
-// Generate a random railway location
+// Generate a random location
 function generateLocation() {
     if (!locationLoaded || locations.length === 0) {
         alert("⚠️ Location data is still loading...");
@@ -65,32 +57,35 @@ function generateLocation() {
 
     const randomIndex = Math.floor(Math.random() * locations.length);
     const location = locations[randomIndex];
+
+    if (!location || !location.properties) {
+        alert("⚠️ No valid location found.");
+        return;
+    }
+
     displayLocation(location);
 }
 
 // Display location details
 function displayLocation(location) {
     const properties = location.properties || {};
+
     document.getElementById("postcode").textContent = properties.postcode || "Unknown";
     document.getElementById("street").textContent = properties.street || "Unknown";
     document.getElementById("what3words").textContent = properties.what3words || "Unknown";
 
     // Update Google Maps and What3Words links
-    if (properties.latitude && properties.longitude) {
-        document.getElementById("google-maps-link").href = `https://www.google.com/maps?q=${properties.latitude},${properties.longitude}`;
-    } else {
-        document.getElementById("google-maps-link").href = "#";
-    }
+    document.getElementById("google-maps-link").href = properties.latitude && properties.longitude 
+        ? `https://www.google.com/maps?q=${properties.latitude},${properties.longitude}` 
+        : "#";
 
-    if (properties.what3words) {
-        document.getElementById("what3words-link").href = `https://what3words.com/${properties.what3words}`;
-    } else {
-        document.getElementById("what3words-link").href = "#";
-    }
+    document.getElementById("what3words-link").href = properties.what3words 
+        ? `https://what3words.com/${properties.what3words}` 
+        : "#";
 }
 
-// Event listeners
-document.getElementById("generate-btn").addEventListener("click", generateLocation);
-
-// Load railway data on page load
-window.onload = loadLocationData;
+// Ensure all elements exist before running event listeners
+document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("generate-btn").addEventListener("click", generateLocation);
+    loadLocationData();
+});
