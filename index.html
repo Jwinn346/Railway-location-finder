@@ -7,27 +7,20 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Railway Location Finder</h1>
-        
-        <div id="location-display">
-            <p><strong>Location Type:</strong> <span id="location-type">-</span></p>
-            <p><strong>Generated Location:</strong> <span id="generated-location">Loading...</span></p>
-        </div>
+    <h1>Railway Location Finder</h1>
+    <button id="generate-btn">Generate Location</button>
+    <p id="location-display">Press 'Generate Location' to start.</p>
 
-        <button id="generate-location">Generate Location</button>
+    <button id="reveal-street">Reveal Street</button>
+    <p id="street-display"></p>
 
-        <div id="reveal-buttons">
-            <button id="reveal-postcode" class="hidden">Reveal Postcode</button>
-            <button id="reveal-street" class="hidden">Reveal Street</button>
-            <button id="reveal-what3words" class="hidden">Reveal What3Words</button>
-        </div>
+    <button id="reveal-postcode">Reveal Postcode</button>
+    <p id="postcode-display"></p>
 
-        <p><strong>Timer:</strong> <span id="timer">00:00</span></p>
-        <p><strong>Points:</strong> <span id="points">0</span></p>
+    <button id="reveal-w3w">Reveal What3Words</button>
+    <p id="w3w-display"></p>
 
-        <button id="finish">Finish</button>
-    </div>
+    <button id="finish-btn">Finish</button>
 
     <script src="script.js"></script>
 </body>
