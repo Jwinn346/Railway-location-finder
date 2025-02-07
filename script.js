@@ -35,10 +35,10 @@ function generateLocation() {
 
     if (clueType === "street") {
         let streetParts = currentLocation.street.split(" ");
-        clueText = streetParts.length > 1 ? streetParts[0] + "..." : "Unknown Street";
+        clueText = streetParts.length > 1 ? streetParts[0] + "..." : currentLocation.street;
     } else {
         let postcodeParts = currentLocation.postcode.split(" ");
-        clueText = postcodeParts.length > 1 ? postcodeParts[0] + "..." : "Unknown Postcode";
+        clueText = postcodeParts.length > 1 ? postcodeParts[0] + "..." : currentLocation.postcode;
     }
 
     document.getElementById("clue").innerText = clueText;
