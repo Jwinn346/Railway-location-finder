@@ -27,6 +27,7 @@ function generateLocation() {
 
     currentLocation = locations[Math.floor(Math.random() * locations.length)];
     document.getElementById("fullLocation").style.display = "none";
+    document.getElementById("mapContainer").style.display = "none"; // Hide the map initially
     document.getElementById("score").innerText = "100";
     score = 100;
 
@@ -79,21 +80,23 @@ function finishGame() {
     document.getElementById("mapsLink").innerText = "View on Google Maps";
     document.getElementById("fullLocation").style.display = "block";
 
-    // Stop timer
+    // Stop the timer
     clearInterval(timerInterval);
 
     // Show Google Maps Screenshot
+    let coordinates = currentLocation.maps_url.replace("https://www.google.com/maps?q=", "").split(",");
+    let lat = coordinates[0];
+    let lon = coordinates[1];
+
     let mapsImage = document.createElement("img");
-    mapsImage.src = `https://maps.googleapis.com/maps/api/staticmap?center=${currentLocation.maps_url.replace(
-        "https://www.google.com/maps?q=",
-        ""
-    )}&zoom=15&size=600x400&maptype=roadmap&key=${googleMapsAPIKey}`;
+    mapsImage.src = `https://maps.googleapis.com/maps/api/staticmap?center=${lat},${lon}&zoom=15&size=600x400&maptype=roadmap&markers=color:red%7C${lat},${lon}&key=${googleMapsAPIKey}`;
     mapsImage.alt = "Location Map";
     mapsImage.style.marginTop = "20px";
 
     let mapContainer = document.getElementById("mapContainer");
     mapContainer.innerHTML = ""; // Clear previous image
     mapContainer.appendChild(mapsImage);
+    mapContainer.style.display = "block"; // Show the map
 }
 
 function startTimer() {
