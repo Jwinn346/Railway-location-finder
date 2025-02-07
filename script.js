@@ -82,8 +82,9 @@ function finishGame() {
     document.getElementById("mapsLink").style.display = "block"; 
     document.getElementById("fullLocation").style.display = "block";
 
-    // ✅ Add Google Maps static image
-    let mapImageUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${encodeURIComponent(currentLocation.street + ", " + currentLocation.postcode)}&zoom=16&size=600x300&markers=color:red%7C${encodeURIComponent(currentLocation.street + ", " + currentLocation.postcode)}&key=YOUR_API_KEY`;
+    // ✅ Generate Google Maps screenshot without API Key
+    let encodedLocation = encodeURIComponent(currentLocation.street + ", " + currentLocation.postcode);
+    let mapImageUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${encodedLocation}&zoom=16&size=600x300&markers=color:red%7C${encodedLocation}`;
     
     document.getElementById("locationMap").src = mapImageUrl;
     document.getElementById("locationMap").style.display = "block"; 
