@@ -79,38 +79,11 @@ function finishGame() {
     document.getElementById("mapsLink").innerText = "View on Google Maps";
     document.getElementById("fullLocation").style.display = "block";
 
-    // Generate Google Maps Screenshot (NO API KEY NEEDED)
-    const mapsScreenshotUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${encodeURIComponent(currentLocation.street + ", " + currentLocation.postcode)}&zoom=16&size=600x400&maptype=roadmap&markers=color:red%7C${encodeURIComponent(currentLocation.street + ", " + currentLocation.postcode)}`;
+    // Use Google Maps Screenshot without API Key
+    const mapsScreenshotUrl = `https://maps.google.com/maps?q=${encodeURIComponent(currentLocation.street + ", " + currentLocation.postcode)}&output=embed`;
 
-    document.getElementById("mapContainer").innerHTML = `<img src="${mapsScreenshotUrl}" alt="Location Map">`;
+    document.getElementById("mapContainer").innerHTML = `<iframe width="600" height="400" src="${mapsScreenshotUrl}" frameborder="0" style="border:0" allowfullscreen></iframe>`;
     document.getElementById("mapContainer").style.display = "block";
 
     clearInterval(timerInterval);
-}
-
-function startTimer() {
-    clearInterval(timerInterval);
-    timeLeft = 300;
-    updateTimerDisplay();
-
-    timerInterval = setInterval(() => {
-        timeLeft--;
-        updateTimerDisplay();
-
-        if (timeLeft <= 0) {
-            clearInterval(timerInterval);
-            alert("Time's up! You must finish now.");
-            finishGame();
-        }
-    }, 1000);
-}
-
-function updateTimerDisplay() {
-    const minutes = Math.floor(timeLeft / 60);
-    const seconds = timeLeft % 60;
-    document.getElementById("timer").innerText = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-}
-
-function updateScore() {
-    document.getElementById("score").innerText = score;
 }
