@@ -4,7 +4,6 @@ let timerInterval;
 let timeLeft = 300; // 5 minutes
 let score = 100;
 let clueType = "";
-let googleMapsAPIKey = "YOUR_GOOGLE_MAPS_API_KEY"; // Replace with your actual Google Maps API key
 
 document.addEventListener("DOMContentLoaded", () => {
     fetch("test_streets.json")
@@ -27,20 +26,20 @@ function generateLocation() {
 
     currentLocation = locations[Math.floor(Math.random() * locations.length)];
     document.getElementById("fullLocation").style.display = "none";
-    document.getElementById("mapContainer").style.display = "none"; // Hide the map initially
+    document.getElementById("mapContainer").style.display = "none";
     document.getElementById("score").innerText = "100";
     score = 100;
 
-    // Randomly pick whether to show part of the street or the postcode first
+    // Randomly pick whether to show part of the street or postcode first
     clueType = Math.random() < 0.5 ? "street" : "postcode";
     let clueText = "";
 
     if (clueType === "street") {
         let streetParts = currentLocation.street.split(" ");
-        clueText = streetParts.length > 1 ? streetParts[0] + "..." : currentLocation.street;
+        clueText = streetParts.length > 1 ? streetParts[0] + "..." : "Unknown Street";
     } else {
         let postcodeParts = currentLocation.postcode.split(" ");
-        clueText = postcodeParts.length > 1 ? postcodeParts[0] + "..." : currentLocation.postcode;
+        clueText = postcodeParts.length > 1 ? postcodeParts[0] + "..." : "Unknown Postcode";
     }
 
     document.getElementById("clue").innerText = clueText;
@@ -80,23 +79,13 @@ function finishGame() {
     document.getElementById("mapsLink").innerText = "View on Google Maps";
     document.getElementById("fullLocation").style.display = "block";
 
-    // Stop the timer
+    // Generate Google Maps Screenshot (NO API KEY NEEDED)
+    const mapsScreenshotUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${encodeURIComponent(currentLocation.street + ", " + currentLocation.postcode)}&zoom=16&size=600x400&maptype=roadmap&markers=color:red%7C${encodeURIComponent(currentLocation.street + ", " + currentLocation.postcode)}`;
+
+    document.getElementById("mapContainer").innerHTML = `<img src="${mapsScreenshotUrl}" alt="Location Map">`;
+    document.getElementById("mapContainer").style.display = "block";
+
     clearInterval(timerInterval);
-
-    // Show Google Maps Screenshot
-    let coordinates = currentLocation.maps_url.replace("https://www.google.com/maps?q=", "").split(",");
-    let lat = coordinates[0];
-    let lon = coordinates[1];
-
-    let mapsImage = document.createElement("img");
-    mapsImage.src = `https://maps.googleapis.com/maps/api/staticmap?center=${lat},${lon}&zoom=15&size=600x400&maptype=roadmap&markers=color:red%7C${lat},${lon}&key=${googleMapsAPIKey}`;
-    mapsImage.alt = "Location Map";
-    mapsImage.style.marginTop = "20px";
-
-    let mapContainer = document.getElementById("mapContainer");
-    mapContainer.innerHTML = ""; // Clear previous image
-    mapContainer.appendChild(mapsImage);
-    mapContainer.style.display = "block"; // Show the map
 }
 
 function startTimer() {
@@ -117,9 +106,9 @@ function startTimer() {
 }
 
 function updateTimerDisplay() {
-    let minutes = Math.floor(timeLeft / 60);
-    let seconds = timeLeft % 60;
-    document.getElementById("timer").innerText = `${minutes}:${seconds.toString().padStart(2, "0")}`;
+    const minutes = Math.floor(timeLeft / 60);
+    const seconds = timeLeft % 60;
+    document.getElementById("timer").innerText = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
 }
 
 function updateScore() {
