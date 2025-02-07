@@ -82,12 +82,12 @@ function finishGame() {
     document.getElementById("mapsLink").style.display = "block"; 
     document.getElementById("fullLocation").style.display = "block";
 
-    // ✅ Using OpenStreetMap for a free, static map screenshot
+    // ✅ Use OpenStreetMap's Static Image (Works Without API Key)
     let coords = mapsURL.match(/q=(-?\d+\.\d+),(-?\d+\.\d+)/);
     if (coords) {
         let lat = coords[1];
         let lon = coords[2];
-        let mapImageUrl = `https://static-maps.yandex.ru/1.x/?lang=en-US&size=600,300&z=16&l=map&pt=${lon},${lat},pm2rdm`;
+        let mapImageUrl = `https://static-maps.openstreetmap.de/staticmap.php?center=${lat},${lon}&zoom=16&size=600x300&maptype=mapnik&markers=${lat},${lon},red-pushpin`;
         
         document.getElementById("locationMap").src = mapImageUrl;
         document.getElementById("locationMap").style.display = "block"; 
