@@ -4,7 +4,7 @@ let timerInterval;
 let timeLeft = 300; // 5 minutes
 let score = 100;
 let clueType = "";
-let googleMapsAPIKey = "YOUR_GOOGLE_MAPS_API_KEY"; // Replace with your Google Maps API Key
+let googleMapsAPIKey = "YOUR_GOOGLE_MAPS_API_KEY"; // Replace with your actual Google Maps API key
 
 document.addEventListener("DOMContentLoaded", () => {
     fetch("test_streets.json")
