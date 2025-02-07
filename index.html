@@ -25,7 +25,6 @@
             <h3>Street: <span id="street"></span></h3>
             <h3>Postcode: <span id="postcode"></span></h3>
             <a id="mapsLink" href="" target="_blank">View on Google Maps</a>
-            <div id="mapContainer"></div> <!-- Google Maps Screenshot Appears Here -->
         </div>
 
         <button id="finish">Finish</button>
@@ -35,8 +34,11 @@
         </div>
 
         <div id="timerContainer">
-            <h3>Time Left: <span id="timer">5:00</span></h3>
+            <h3>Time Left: <span id="timer">5:00</span> minutes</h3>
         </div>
+
+        <!-- Google Maps Screenshot Display -->
+        <div id="mapContainer" style="display: none;"></div>
     </div>
 
     <script src="script.js"></script>
