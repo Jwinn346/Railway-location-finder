@@ -3,18 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Railway Location Finder</title>
+    <title>Railway Location Training</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Railway Location Finder</h1>
-    <p>Click "Generate Location" to start.</p>
+    <h1>Railway Location Training</h1>
 
-    <div id="location-display">No location generated.</div>
-    <button id="generate-btn">Generate Location</button>
-    <button id="reveal-btn" style="display:none;">Reveal Details</button>
-    <button id="finish-btn">Finish Exercise</button>
-    <p id="timer">Time: 300s</p>
+    <p id="timer">Time Remaining: 60s</p>
+    <p id="score">Score: 100</p>
+    
+    <button onclick="generateLocation()">Generate Location</button>
+    <p id="location">???</p>
+
+    <button onclick="revealStreet()" id="streetHint">Reveal Street</button>
+    <button onclick="revealPostcode()" id="postcodeHint">Reveal Postcode</button>
+    
+    <button onclick="endGame()" id="finishButton">Finish</button>
+
+    <div id="map"></div>
+    <p id="finalScore"></p>
 
     <script src="script.js"></script>
 </body>
