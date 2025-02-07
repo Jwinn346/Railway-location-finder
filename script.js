@@ -1,122 +1,94 @@
-document.addEventListener("DOMContentLoaded", async function () {
-    const locationDisplay = document.getElementById("location-display");
-    const generateBtn = document.getElementById("generate-btn");
-    const revealBtn = document.getElementById("reveal-btn");
-    const finishBtn = document.getElementById("finish-btn");
-    const timerDisplay = document.getElementById("timer");
+let locations = [];
+let currentLocation = null;
+let timer;
+let timeRemaining = 60; // 60 seconds per round
+let score = 100; // Initial score
+let hintsUsed = 0;
 
-    let locationData = [];
-    let countdown;
+// Load location data from test_streets.json
+fetch('test_streets.json')
+  .then(response => response.json())
+  .then(data => {
+    locations = data;
+  })
+  .catch(error => console.error('Error loading locations:', error));
 
-    // List of GeoJSON files to load
-    const fileList = [
-        "railways-cambridgeshire.geojson",
-        "railways-hertfordshire.geojson",
-        "railways-lincolnshire.geojson",
-        "railways-london.geojson",
-        "streets-cambridgeshire-part-aa.geojson",
-        "streets-cambridgeshire-part-ab.geojson",
-        "streets-cambridgeshire-part-ac.geojson",
-        "streets-hertfordshire-part-aa.geojson",
-        "streets-hertfordshire-part-ab.geojson",
-        "streets-lincolnshire-part-aa.geojson",
-        "streets-lincolnshire-part-ab.geojson",
-        "streets-london-part-aa.geojson",
-        "streets-london-part-ab.geojson",
-        "streets-london-part-ac.geojson"
-    ];
+// Function to start a new round
+function generateLocation() {
+  if (locations.length === 0) {
+    alert("Locations data not loaded yet!");
+    return;
+  }
 
-    async function loadLocationData() {
-        locationData = []; // Clear existing data
+  // Reset game state
+  document.getElementById("location").textContent = "???";
+  document.getElementById("streetHint").textContent = "Reveal Street";
+  document.getElementById("postcodeHint").textContent = "Reveal Postcode";
+  document.getElementById("finishButton").disabled = false;
+  document.getElementById("map").innerHTML = ""; // Clear previous map
+  document.getElementById("score").textContent = `Score: 100`;
+  
+  // Reset hints and score
+  hintsUsed = 0;
+  score = 100;
+  timeRemaining = 60;
 
-        for (let file of fileList) {
-            try {
-                let response = await fetch(`docs/${file}`);
-                if (!response.ok) {
-                    console.warn(`⚠️ Skipping: ${file} (Not Found)`);
-                    continue;
-                }
+  // Pick a random location
+  currentLocation = locations[Math.floor(Math.random() * locations.length)];
+  document.getElementById("location").textContent = "Location Generated!";
 
-                let jsonData = await response.json();
-
-                if (!jsonData || !jsonData.features || jsonData.features.length === 0) {
-                    console.warn(`⚠️ Skipping: ${file} (Empty JSON)`);
-                    continue; // Skip empty files
-                }
-
-                // Extract valid features (postcodes, streets, What3Words)
-                let validLocations = jsonData.features
-                    .map(f => f.properties)
-                    .filter(p => p.postcode || p.street || p.what3words);
-
-                if (validLocations.length > 0) {
-                    locationData = locationData.concat(validLocations);
-                    console.log(`✅ Loaded: ${file} (${validLocations.length} locations)`);
-                } else {
-                    console.warn(`⚠️ Skipping: ${file} (No useful data)`);
-                }
-
-            } catch (error) {
-                console.error(`❌ Error loading ${file}:`, error);
-            }
-        }
-
-        if (locationData.length === 0) {
-            console.error("❌ No valid location data available.");
-        } else {
-            console.log(`✅ Total locations loaded: ${locationData.length}`);
-        }
+  // Start Timer
+  clearInterval(timer);
+  timer = setInterval(() => {
+    if (timeRemaining > 0) {
+      timeRemaining--;
+      document.getElementById("timer").textContent = `Time Remaining: ${timeRemaining}s`;
+    } else {
+      endGame();
     }
+  }, 1000);
+}
 
-    function generateLocation() {
-        if (locationData.length === 0) {
-            locationDisplay.textContent = "No locations available.";
-            return;
-        }
+// Function to reveal the street name (with penalty)
+function revealStreet() {
+  if (currentLocation) {
+    document.getElementById("location").textContent = currentLocation.street;
+    applyPenalty();
+  }
+}
 
-        let randomLocation = locationData[Math.floor(Math.random() * locationData.length)];
+// Function to reveal the postcode (with penalty)
+function revealPostcode() {
+  if (currentLocation) {
+    document.getElementById("postcodeHint").textContent = currentLocation.postcode;
+    applyPenalty();
+  }
+}
 
-        // Display one random field, hide the others
-        let visibleField = Math.random() < 0.5 ? "postcode" : "street";
-        locationDisplay.innerHTML = `<strong>Location:</strong> ${randomLocation[visibleField] || "Unknown"}`;
+// Apply penalty for using a hint
+function applyPenalty() {
+  if (score > 0) {
+    hintsUsed++;
+    score -= 20; // Deduct 20 points per hint used
+    document.getElementById("score").textContent = `Score: ${score}`;
+  }
+}
 
-        revealBtn.dataset.postcode = randomLocation.postcode || "Unknown";
-        revealBtn.dataset.street = randomLocation.street || "Unknown";
-        revealBtn.dataset.what3words = randomLocation.what3words || "Unknown";
-        revealBtn.style.display = "inline-block";
+// Function to finish the round and display full details
+function endGame() {
+  clearInterval(timer);
+  
+  if (!currentLocation) return;
 
-        startTimer();
-    }
+  document.getElementById("finishButton").disabled = true;
 
-    function revealDetails() {
-        locationDisplay.innerHTML = `
-            <strong>Postcode:</strong> ${revealBtn.dataset.postcode} <br>
-            <strong>Street:</strong> ${revealBtn.dataset.street} <br>
-            <strong>What3Words:</strong> ${revealBtn.dataset.what3words}
-        `;
-    }
+  let mapUrl = currentLocation.maps_url;
+  document.getElementById("map").innerHTML = `
+    <p><strong>Street:</strong> ${currentLocation.street}</p>
+    <p><strong>Postcode:</strong> ${currentLocation.postcode}</p>
+    <p><strong>Google Maps:</strong> <a href="${mapUrl}" target="_blank">View Location</a></p>
+    <iframe src="${mapUrl}&output=embed" width="300" height="300"></iframe>
+  `;
 
-    function startTimer() {
-        clearInterval(countdown);
-        let timeLeft = 300;
-        timerDisplay.textContent = `Time: ${timeLeft}s`;
-
-        countdown = setInterval(() => {
-            timeLeft--;
-            timerDisplay.textContent = `Time: ${timeLeft}s`;
-            if (timeLeft === 0) clearInterval(countdown);
-        }, 1000);
-    }
-
-    function finishExercise() {
-        clearInterval(countdown);
-        let timeTaken = 300 - parseInt(timerDisplay.textContent.replace(/\D/g, ""));
-        locationDisplay.innerHTML = `✅ Exercise Complete! <br> Time Taken: ${timeTaken} seconds`;
-    }
-
-    generateBtn.addEventListener("click", generateLocation);
-    revealBtn.addEventListener("click", revealDetails);
-    finishBtn.addEventListener("click", finishExercise);
-
-    await loadLocationData(); // Load locations on startup
-});
+  document.getElementById("finalScore").textContent = `Final Score: ${score}`;
+}
