@@ -26,11 +26,13 @@ function generateLocation() {
 
     currentLocation = locations[Math.floor(Math.random() * locations.length)];
     document.getElementById("fullLocation").style.display = "none";
-    document.getElementById("mapContainer").style.display = "none";
+    document.getElementById("street").innerText = ""; // Ensure blank until revealed
+    document.getElementById("postcode").innerText = ""; // Ensure blank until revealed
+    document.getElementById("mapsLink").style.display = "none"; // Hide link until finish
     document.getElementById("score").innerText = "100";
     score = 100;
 
-    // Randomly pick whether to show part of the street or postcode first
+    // Randomly pick whether to show part of the street or the postcode first
     clueType = Math.random() < 0.5 ? "street" : "postcode";
     let clueText = "";
 
@@ -77,13 +79,35 @@ function finishGame() {
 
     document.getElementById("mapsLink").href = currentLocation.maps_url;
     document.getElementById("mapsLink").innerText = "View on Google Maps";
+    document.getElementById("mapsLink").style.display = "block"; // Show the link
     document.getElementById("fullLocation").style.display = "block";
 
-    // Use Google Maps Screenshot without API Key
-    const mapsScreenshotUrl = `https://maps.google.com/maps?q=${encodeURIComponent(currentLocation.street + ", " + currentLocation.postcode)}&output=embed`;
-
-    document.getElementById("mapContainer").innerHTML = `<iframe width="600" height="400" src="${mapsScreenshotUrl}" frameborder="0" style="border:0" allowfullscreen></iframe>`;
-    document.getElementById("mapContainer").style.display = "block";
-
     clearInterval(timerInterval);
+}
+
+function startTimer() {
+    clearInterval(timerInterval);
+    timeLeft = 300;
+    updateTimerDisplay();
+
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        updateTimerDisplay();
+
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            alert("Time's up! You must finish now.");
+            finishGame();
+        }
+    }, 1000);
+}
+
+function updateTimerDisplay() {
+    let minutes = Math.floor(timeLeft / 60);
+    let seconds = timeLeft % 60;
+    document.getElementById("timer").innerText = `${minutes}:${seconds < 10 ? "0" : ""}${seconds} minutes`;
+}
+
+function updateScore() {
+    document.getElementById("score").innerText = score;
 }
