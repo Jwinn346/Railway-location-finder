@@ -82,12 +82,16 @@ function finishGame() {
     document.getElementById("mapsLink").style.display = "block"; 
     document.getElementById("fullLocation").style.display = "block";
 
-    // ✅ Generate Google Maps screenshot without API Key
-    let encodedLocation = encodeURIComponent(currentLocation.street + ", " + currentLocation.postcode);
-    let mapImageUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${encodedLocation}&zoom=16&size=600x300&markers=color:red%7C${encodedLocation}`;
-    
-    document.getElementById("locationMap").src = mapImageUrl;
-    document.getElementById("locationMap").style.display = "block"; 
+    // ✅ Using OpenStreetMap for a free, static map screenshot
+    let coords = mapsURL.match(/q=(-?\d+\.\d+),(-?\d+\.\d+)/);
+    if (coords) {
+        let lat = coords[1];
+        let lon = coords[2];
+        let mapImageUrl = `https://static-maps.yandex.ru/1.x/?lang=en-US&size=600,300&z=16&l=map&pt=${lon},${lat},pm2rdm`;
+        
+        document.getElementById("locationMap").src = mapImageUrl;
+        document.getElementById("locationMap").style.display = "block"; 
+    }
 
     clearInterval(timerInterval);
 }
