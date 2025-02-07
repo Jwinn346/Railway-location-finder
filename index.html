@@ -7,21 +7,36 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Railway Location Training</h1>
+    <div class="container">
+        <h1>Railway Location Training</h1>
+        
+        <button id="generateLocation">Generate Location</button>
+        
+        <div id="locationDisplay">
+            <h2>Clue: <span id="clue"></span></h2>
+        </div>
 
-    <p id="timer">Time Remaining: 60s</p>
-    <p id="score">Score: 100</p>
-    
-    <button onclick="generateLocation()">Generate Location</button>
-    <p id="location">???</p>
+        <div id="hints">
+            <button id="revealStreet">Reveal Street</button>
+            <button id="revealPostcode">Reveal Postcode</button>
+        </div>
 
-    <button onclick="revealStreet()" id="streetHint">Reveal Street</button>
-    <button onclick="revealPostcode()" id="postcodeHint">Reveal Postcode</button>
-    
-    <button onclick="endGame()" id="finishButton">Finish</button>
+        <div id="fullLocation" style="display: none;">
+            <h3>Street: <span id="street"></span></h3>
+            <h3>Postcode: <span id="postcode"></span></h3>
+            <a id="mapsLink" href="" target="_blank">View on Google Maps</a>
+        </div>
 
-    <div id="map"></div>
-    <p id="finalScore"></p>
+        <button id="finish">Finish</button>
+
+        <div id="scoreContainer">
+            <h3>Score: <span id="score">100</span></h3>
+        </div>
+
+        <div id="timerContainer">
+            <h3>Time Left: <span id="timer">300</span> seconds</h3>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>
