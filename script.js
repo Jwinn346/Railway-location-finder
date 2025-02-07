@@ -4,6 +4,7 @@ let timerInterval;
 let timeLeft = 300; // 5 minutes
 let score = 100;
 let clueType = "";
+let googleMapsAPIKey = "YOUR_GOOGLE_MAPS_API_KEY"; // Replace with your Google Maps API Key
 
 document.addEventListener("DOMContentLoaded", () => {
     fetch("test_streets.json")
@@ -78,17 +79,31 @@ function finishGame() {
     document.getElementById("mapsLink").innerText = "View on Google Maps";
     document.getElementById("fullLocation").style.display = "block";
 
+    // Stop timer
     clearInterval(timerInterval);
+
+    // Show Google Maps Screenshot
+    let mapsImage = document.createElement("img");
+    mapsImage.src = `https://maps.googleapis.com/maps/api/staticmap?center=${currentLocation.maps_url.replace(
+        "https://www.google.com/maps?q=",
+        ""
+    )}&zoom=15&size=600x400&maptype=roadmap&key=${googleMapsAPIKey}`;
+    mapsImage.alt = "Location Map";
+    mapsImage.style.marginTop = "20px";
+
+    let mapContainer = document.getElementById("mapContainer");
+    mapContainer.innerHTML = ""; // Clear previous image
+    mapContainer.appendChild(mapsImage);
 }
 
 function startTimer() {
     clearInterval(timerInterval);
     timeLeft = 300;
-    document.getElementById("timer").innerText = timeLeft;
+    updateTimerDisplay();
 
     timerInterval = setInterval(() => {
         timeLeft--;
-        document.getElementById("timer").innerText = timeLeft;
+        updateTimerDisplay();
 
         if (timeLeft <= 0) {
             clearInterval(timerInterval);
@@ -96,6 +111,12 @@ function startTimer() {
             finishGame();
         }
     }, 1000);
+}
+
+function updateTimerDisplay() {
+    let minutes = Math.floor(timeLeft / 60);
+    let seconds = timeLeft % 60;
+    document.getElementById("timer").innerText = `${minutes}:${seconds.toString().padStart(2, "0")}`;
 }
 
 function updateScore() {
