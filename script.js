@@ -26,13 +26,12 @@ function generateLocation() {
 
     currentLocation = locations[Math.floor(Math.random() * locations.length)];
     document.getElementById("fullLocation").style.display = "none";
-    document.getElementById("street").innerText = ""; // Ensure blank until revealed
-    document.getElementById("postcode").innerText = ""; // Ensure blank until revealed
-    document.getElementById("mapsLink").style.display = "none"; // Hide link until finish
+    document.getElementById("street").innerText = ""; 
+    document.getElementById("postcode").innerText = ""; 
+    document.getElementById("mapsLink").style.display = "none"; 
     document.getElementById("score").innerText = "100";
     score = 100;
 
-    // Randomly pick whether to show part of the street or the postcode first
     clueType = Math.random() < 0.5 ? "street" : "postcode";
     let clueText = "";
 
@@ -46,7 +45,6 @@ function generateLocation() {
 
     document.getElementById("clue").innerText = clueText;
 
-    // Start the timer
     startTimer();
 }
 
@@ -79,7 +77,7 @@ function finishGame() {
 
     document.getElementById("mapsLink").href = currentLocation.maps_url;
     document.getElementById("mapsLink").innerText = "View on Google Maps";
-    document.getElementById("mapsLink").style.display = "block"; // Show the link
+    document.getElementById("mapsLink").style.display = "block"; 
     document.getElementById("fullLocation").style.display = "block";
 
     clearInterval(timerInterval);
@@ -87,18 +85,19 @@ function finishGame() {
 
 function startTimer() {
     clearInterval(timerInterval);
-    timeLeft = 300;
-    updateTimerDisplay();
+    timeLeft = 300; 
+    updateTimerDisplay(); 
 
     timerInterval = setInterval(() => {
-        timeLeft--;
-        updateTimerDisplay();
-
         if (timeLeft <= 0) {
             clearInterval(timerInterval);
             alert("Time's up! You must finish now.");
             finishGame();
+            return;
         }
+
+        timeLeft--;
+        updateTimerDisplay();
     }, 1000);
 }
 
