@@ -29,6 +29,7 @@ function generateLocation() {
     document.getElementById("street").innerText = ""; 
     document.getElementById("postcode").innerText = ""; 
     document.getElementById("mapsLink").style.display = "none"; 
+    document.getElementById("locationMap").style.display = "none"; 
     document.getElementById("score").innerText = "100";
     score = 100;
 
@@ -75,10 +76,17 @@ function revealPostcode() {
 function finishGame() {
     if (!currentLocation) return;
 
-    document.getElementById("mapsLink").href = currentLocation.maps_url;
+    let mapsURL = currentLocation.maps_url;
+    document.getElementById("mapsLink").href = mapsURL;
     document.getElementById("mapsLink").innerText = "View on Google Maps";
     document.getElementById("mapsLink").style.display = "block"; 
     document.getElementById("fullLocation").style.display = "block";
+
+    // ✅ Add Google Maps static image
+    let mapImageUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${encodeURIComponent(currentLocation.street + ", " + currentLocation.postcode)}&zoom=16&size=600x300&markers=color:red%7C${encodeURIComponent(currentLocation.street + ", " + currentLocation.postcode)}&key=YOUR_API_KEY`;
+    
+    document.getElementById("locationMap").src = mapImageUrl;
+    document.getElementById("locationMap").style.display = "block"; 
 
     clearInterval(timerInterval);
 }
