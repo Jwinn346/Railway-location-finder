@@ -3,7 +3,7 @@ let currentLocation = null;
 let timerInterval;
 let timeLeft = 300; // 5 minutes
 let score = 100;
-let hintType = "";
+let revealedHint = "";
 
 document.addEventListener("DOMContentLoaded", () => {
     fetch("railway_addresses_cleaned.json")
@@ -30,31 +30,28 @@ function generateLocation() {
     document.getElementById("score").innerText = "100";
     score = 100;
 
-    // Randomly show one of the three (Street, Postcode, or W3W)
+    // Randomly select to show either street, postcode, or W3W
     let options = ["street", "postcode", "w3w"];
-    hintType = options[Math.floor(Math.random() * options.length)];
-    
-    let hintText = "";
-    if (hintType === "street") {
-        hintText = currentLocation.street;
-    } else if (hintType === "postcode") {
-        hintText = currentLocation.postcode;
-    } else if (hintType === "w3w") {
-        hintText = currentLocation.w3w;
+    revealedHint = options[Math.floor(Math.random() * options.length)];
+
+    if (revealedHint === "street") {
+        document.getElementById("clue").innerText = currentLocation.street;
+    } else if (revealedHint === "postcode") {
+        document.getElementById("clue").innerText = currentLocation.postcode;
+    } else {
+        document.getElementById("clue").innerText = currentLocation.w3w;
     }
 
-    document.getElementById("hint").innerText = hintText;
-
-    // Start the timer
     startTimer();
 }
 
 function revealStreet() {
     if (!currentLocation) return;
+
     document.getElementById("street").innerText = currentLocation.street;
     document.getElementById("fullLocation").style.display = "block";
 
-    if (hintType !== "street") {
+    if (revealedHint !== "street") {
         score -= 10;
         updateScore();
     }
@@ -62,10 +59,11 @@ function revealStreet() {
 
 function revealPostcode() {
     if (!currentLocation) return;
+
     document.getElementById("postcode").innerText = currentLocation.postcode;
     document.getElementById("fullLocation").style.display = "block";
 
-    if (hintType !== "postcode") {
+    if (revealedHint !== "postcode") {
         score -= 10;
         updateScore();
     }
@@ -73,15 +71,12 @@ function revealPostcode() {
 
 function revealW3W() {
     if (!currentLocation) return;
-    let w3wText = currentLocation.w3w;
-    let w3wLink = `https://what3words.com/${w3wText.replace(/\./g, '')}`;
 
-    document.getElementById("w3w").innerText = w3wText;
-    document.getElementById("w3wLink").href = w3wLink;
-    document.getElementById("w3wLink").style.display = "inline";
+    document.getElementById("w3w").innerText = currentLocation.w3w;
+    document.getElementById("w3wLink").href = `https://what3words.com/${currentLocation.w3w}`;
     document.getElementById("fullLocation").style.display = "block";
 
-    if (hintType !== "w3w") {
+    if (revealedHint !== "w3w") {
         score -= 10;
         updateScore();
     }
@@ -92,14 +87,8 @@ function finishGame() {
 
     document.getElementById("mapsLink").href = currentLocation.maps_url;
     document.getElementById("mapsLink").innerText = "View on Google Maps";
+    document.getElementById("locationMap").src = `https://maps.googleapis.com/maps/api/staticmap?center=${currentLocation.latitude},${currentLocation.longitude}&zoom=16&size=400x400&markers=color:red%7C${currentLocation.latitude},${currentLocation.longitude}`;
     document.getElementById("fullLocation").style.display = "block";
-
-    let lat = currentLocation.latitude;
-    let lon = currentLocation.longitude;
-    let mapImageURL = `https://maps.googleapis.com/maps/api/staticmap?center=${lat},${lon}&zoom=15&size=600x400&markers=color:red%7C${lat},${lon}`;
-
-    document.getElementById("mapScreenshot").src = mapImageURL;
-    document.getElementById("mapScreenshot").style.display = "block";
 
     clearInterval(timerInterval);
 }
@@ -107,11 +96,13 @@ function finishGame() {
 function startTimer() {
     clearInterval(timerInterval);
     timeLeft = 300;
-    updateTimerDisplay();
+    document.getElementById("timer").innerText = "5:00";
 
     timerInterval = setInterval(() => {
         timeLeft--;
-        updateTimerDisplay();
+        let minutes = Math.floor(timeLeft / 60);
+        let seconds = timeLeft % 60;
+        document.getElementById("timer").innerText = `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
 
         if (timeLeft <= 0) {
             clearInterval(timerInterval);
@@ -119,12 +110,6 @@ function startTimer() {
             finishGame();
         }
     }, 1000);
-}
-
-function updateTimerDisplay() {
-    let minutes = Math.floor(timeLeft / 60);
-    let seconds = timeLeft % 60;
-    document.getElementById("timer").innerText = `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
 }
 
 function updateScore() {
