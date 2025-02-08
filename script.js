@@ -39,9 +39,9 @@ function generateLocation() {
     } else if (revealedHint === "postcode") {
         document.getElementById("clue").innerText = currentLocation.postcode;
     } else {
-        // Ensure only the three words are shown (remove extra address info)
-        let w3wParts = currentLocation.w3w.split(","); // Assuming W3W might be stored as "word1.word2.word3, City, Country"
-        document.getElementById("clue").innerText = w3wParts[0]; 
+        // Extract only the three words from What3Words data
+        let w3wReference = extractW3W(currentLocation.w3w);
+        document.getElementById("clue").innerText = w3wReference;
     }
 
     startTimer();
@@ -74,11 +74,9 @@ function revealPostcode() {
 function revealW3W() {
     if (!currentLocation) return;
 
-    let w3wParts = currentLocation.w3w.split(","); // Fixing incorrect W3W display
-    let w3wThreeWords = w3wParts[0]; 
-
-    document.getElementById("w3w").innerText = w3wThreeWords;
-    document.getElementById("w3wLink").href = `https://what3words.com/${w3wThreeWords}`;
+    let w3wReference = extractW3W(currentLocation.w3w);
+    document.getElementById("w3w").innerText = w3wReference;
+    document.getElementById("w3wLink").href = `https://what3words.com/${w3wReference}`;
     document.getElementById("fullLocation").style.display = "block";
 
     if (revealedHint !== "w3w") {
@@ -93,8 +91,10 @@ function finishGame() {
     document.getElementById("mapsLink").href = currentLocation.maps_url;
     document.getElementById("mapsLink").innerText = "View on Google Maps";
 
-    // **Fix Google Maps Screenshot**
-    document.getElementById("locationMap").src = `https://maps.googleapis.com/maps/api/staticmap?center=${currentLocation.latitude},${currentLocation.longitude}&zoom=16&size=400x400&markers=color:red%7C${currentLocation.latitude},${currentLocation.longitude}&key=YOUR_API_KEY`;
+    // **Fix Google Maps Screenshot URL**
+    document.getElementById("locationMap").src = `https://maps.googleapis.com/maps/api/staticmap?center=${currentLocation.latitude},${currentLocation.longitude}&zoom=16&size=400x400&markers=color:red%7C${currentLocation.latitude},${currentLocation.longitude}`;
+    document.getElementById("locationMap").style.display = "block";  // Ensure it is visible
+
     document.getElementById("fullLocation").style.display = "block";
 
     clearInterval(timerInterval);
@@ -121,4 +121,10 @@ function startTimer() {
 
 function updateScore() {
     document.getElementById("score").innerText = score;
+}
+
+// Function to extract only the three-word W3W reference from the full address
+function extractW3W(w3wFull) {
+    let w3wParts = w3wFull.split(",");
+    return w3wParts[0]; // This assumes W3W is stored like "word1.word2.word3, City, Country"
 }
