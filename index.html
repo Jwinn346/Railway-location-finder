@@ -13,18 +13,21 @@
         <button id="generateLocation">Generate Location</button>
 
         <div id="locationDisplay">
-            <h2>Clue: <span id="clue"></span></h2>
+            <h2>Hint: <span id="hint"></span></h2>
         </div>
 
         <div id="hints">
             <button id="revealStreet">Reveal Street</button>
             <button id="revealPostcode">Reveal Postcode</button>
+            <button id="revealW3W">Reveal W3W</button>
         </div>
 
         <div id="fullLocation" style="display: none;">
             <h3>Street: <span id="street"></span></h3>
             <h3>Postcode: <span id="postcode"></span></h3>
+            <h3>What3Words: <a id="w3wLink" href="" target="_blank"><span id="w3w"></span></a></h3>
             <a id="mapsLink" href="" target="_blank">View on Google Maps</a>
+            <img id="mapScreenshot" src="" alt="Map Screenshot">
         </div>
 
         <button id="finish">Finish</button>
@@ -34,12 +37,8 @@
         </div>
 
         <div id="timerContainer">
-            <h3>Time Left: <span id="timer">5:00</span> minutes</h3>
+            <h3>Time Left: <span id="timer">5:00</span></h3>
         </div>
-
-        <!-- ✅ Screenshot from OpenStreetMap (No API Key Needed) -->
-        <img id="locationMap" src="" alt="Location Map" style="display: none; width: 100%; max-width: 600px; margin-top: 10px;">
-
     </div>
 
     <script src="script.js"></script>
