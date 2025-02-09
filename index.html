@@ -13,21 +13,21 @@
         <button id="generateLocation">Generate Location</button>
 
         <div id="locationDisplay">
-            <h2>Hint: <span id="clue"></span></h2>
+            <h2>Clue: <span id="clue"></span></h2>
         </div>
 
         <div id="hints">
             <button id="revealStreet">Reveal Street</button>
             <button id="revealPostcode">Reveal Postcode</button>
-            <button id="revealW3W">Reveal W3W</button>
         </div>
 
         <div id="fullLocation" style="display: none;">
             <h3>Street: <span id="street"></span></h3>
             <h3>Postcode: <span id="postcode"></span></h3>
-            <h3>W3W: <a id="w3wLink" href="" target="_blank"><span id="w3w"></span></a></h3>
             <a id="mapsLink" href="" target="_blank">View on Google Maps</a>
-            <img id="locationMap" src="" alt="Map Screenshot" style="display: none;">
+            <div id="mapContainer">
+                <img id="mapScreenshot" src="" alt="Location Screenshot">
+            </div>
         </div>
 
         <button id="finish">Finish</button>
