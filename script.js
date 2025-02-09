@@ -78,12 +78,14 @@ function finishGame() {
     document.getElementById("mapsLink").innerText = "View on Google Maps";
     document.getElementById("fullLocation").style.display = "block";
 
-    // Fetch and display the map screenshot
+    // Fetch and display the map screenshot without an API key
     let lat = currentLocation.latitude;
     let lon = currentLocation.longitude;
-    let mapImageUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${lat},${lon}&zoom=16&size=400x400&markers=color:red%7C${lat},${lon}&key=YOUR_GOOGLE_MAPS_API_KEY`;
-    
-    document.getElementById("mapScreenshot").src = mapImageUrl;
+    let mapImageUrl = `https://maps.google.com/maps?q=${lat},${lon}&output=embed`;
+
+    // Embed Google Maps without API key
+    let mapIframe = `<iframe width="400" height="400" src="${mapImageUrl}" frameborder="0" allowfullscreen></iframe>`;
+    document.getElementById("mapContainer").innerHTML = mapIframe;
     document.getElementById("mapContainer").style.display = "block";
 
     clearInterval(timerInterval);
