@@ -43,6 +43,10 @@ function generateLocation() {
 
     document.getElementById("clue").innerText = clueText;
 
+    // Reset the map display
+    document.getElementById("mapContainer").innerHTML = "";
+    document.getElementById("mapContainer").style.display = "none";
+
     // Start the timer
     startTimer();
 }
@@ -81,11 +85,11 @@ function finishGame() {
     // Fetch and display the map screenshot without an API key
     let lat = currentLocation.latitude;
     let lon = currentLocation.longitude;
-    let mapImageUrl = `https://maps.google.com/maps?q=${lat},${lon}&output=embed`;
+    let mapImageUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${lat},${lon}&zoom=16&size=400x400&markers=color:red%7C${lat},${lon}`;
 
-    // Embed Google Maps without API key
-    let mapIframe = `<iframe width="400" height="400" src="${mapImageUrl}" frameborder="0" allowfullscreen></iframe>`;
-    document.getElementById("mapContainer").innerHTML = mapIframe;
+    // Use an image tag instead of an iframe
+    let mapImage = `<img src="${mapImageUrl}" alt="Location Screenshot" width="400" height="400" onerror="this.onerror=null; this.src='fallback-map.png';">`;
+    document.getElementById("mapContainer").innerHTML = mapImage;
     document.getElementById("mapContainer").style.display = "block";
 
     clearInterval(timerInterval);
