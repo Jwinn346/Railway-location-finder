@@ -1,9 +1,9 @@
 let locations = [];
 let currentLocation = null;
 let timerInterval;
-let timeLeft = 300; // 5 minutes
+let timeLeft = 300; // 5 minutes (in seconds)
 let score = 100;
-let revealedHint = "";
+let clueType = "";
 
 document.addEventListener("DOMContentLoaded", () => {
     fetch("railway_addresses_cleaned.json")
@@ -15,7 +15,6 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("generateLocation").addEventListener("click", generateLocation);
     document.getElementById("revealStreet").addEventListener("click", revealStreet);
     document.getElementById("revealPostcode").addEventListener("click", revealPostcode);
-    document.getElementById("revealW3W").addEventListener("click", revealW3W);
     document.getElementById("finish").addEventListener("click", finishGame);
 });
 
@@ -30,20 +29,21 @@ function generateLocation() {
     document.getElementById("score").innerText = "100";
     score = 100;
 
-    // Randomly select street, postcode, or W3W
-    let options = ["street", "postcode", "w3w"];
-    revealedHint = options[Math.floor(Math.random() * options.length)];
+    // Randomly pick whether to show part of the street or the postcode first
+    clueType = Math.random() < 0.5 ? "street" : "postcode";
+    let clueText = "";
 
-    if (revealedHint === "street") {
-        document.getElementById("clue").innerText = currentLocation.street;
-    } else if (revealedHint === "postcode") {
-        document.getElementById("clue").innerText = currentLocation.postcode;
+    if (clueType === "street") {
+        let streetParts = currentLocation.street.split(" ");
+        clueText = streetParts.length > 1 ? streetParts[0] + "..." : "Unknown Street";
     } else {
-        // Extract only the three words from What3Words data
-        let w3wReference = extractW3W(currentLocation.w3w);
-        document.getElementById("clue").innerText = w3wReference;
+        let postcodeParts = currentLocation.postcode.split(" ");
+        clueText = postcodeParts.length > 1 ? postcodeParts[0] + "..." : "Unknown Postcode";
     }
 
+    document.getElementById("clue").innerText = clueText;
+
+    // Start the timer
     startTimer();
 }
 
@@ -53,7 +53,7 @@ function revealStreet() {
     document.getElementById("street").innerText = currentLocation.street;
     document.getElementById("fullLocation").style.display = "block";
 
-    if (revealedHint !== "street") {
+    if (clueType !== "street") {
         score -= 10;
         updateScore();
     }
@@ -65,21 +65,7 @@ function revealPostcode() {
     document.getElementById("postcode").innerText = currentLocation.postcode;
     document.getElementById("fullLocation").style.display = "block";
 
-    if (revealedHint !== "postcode") {
-        score -= 10;
-        updateScore();
-    }
-}
-
-function revealW3W() {
-    if (!currentLocation) return;
-
-    let w3wReference = extractW3W(currentLocation.w3w);
-    document.getElementById("w3w").innerText = w3wReference;
-    document.getElementById("w3wLink").href = `https://what3words.com/${w3wReference}`;
-    document.getElementById("fullLocation").style.display = "block";
-
-    if (revealedHint !== "w3w") {
+    if (clueType !== "postcode") {
         score -= 10;
         updateScore();
     }
@@ -90,12 +76,15 @@ function finishGame() {
 
     document.getElementById("mapsLink").href = currentLocation.maps_url;
     document.getElementById("mapsLink").innerText = "View on Google Maps";
-
-    // **Fix Google Maps Screenshot URL**
-    document.getElementById("locationMap").src = `https://maps.googleapis.com/maps/api/staticmap?center=${currentLocation.latitude},${currentLocation.longitude}&zoom=16&size=400x400&markers=color:red%7C${currentLocation.latitude},${currentLocation.longitude}`;
-    document.getElementById("locationMap").style.display = "block";  // Ensure it is visible
-
     document.getElementById("fullLocation").style.display = "block";
+
+    // Fetch and display the map screenshot
+    let lat = currentLocation.latitude;
+    let lon = currentLocation.longitude;
+    let mapImageUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${lat},${lon}&zoom=16&size=400x400&markers=color:red%7C${lat},${lon}&key=YOUR_GOOGLE_MAPS_API_KEY`;
+    
+    document.getElementById("mapScreenshot").src = mapImageUrl;
+    document.getElementById("mapContainer").style.display = "block";
 
     clearInterval(timerInterval);
 }
@@ -103,13 +92,11 @@ function finishGame() {
 function startTimer() {
     clearInterval(timerInterval);
     timeLeft = 300;
-    document.getElementById("timer").innerText = "5:00";
+    updateTimerDisplay();
 
     timerInterval = setInterval(() => {
         timeLeft--;
-        let minutes = Math.floor(timeLeft / 60);
-        let seconds = timeLeft % 60;
-        document.getElementById("timer").innerText = `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+        updateTimerDisplay();
 
         if (timeLeft <= 0) {
             clearInterval(timerInterval);
@@ -119,12 +106,12 @@ function startTimer() {
     }, 1000);
 }
 
-function updateScore() {
-    document.getElementById("score").innerText = score;
+function updateTimerDisplay() {
+    let minutes = Math.floor(timeLeft / 60);
+    let seconds = timeLeft % 60;
+    document.getElementById("timer").innerText = `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
 }
 
-// Function to extract only the three-word W3W reference from the full address
-function extractW3W(w3wFull) {
-    let w3wParts = w3wFull.split(",");
-    return w3wParts[0]; // This assumes W3W is stored like "word1.word2.word3, City, Country"
+function updateScore() {
+    document.getElementById("score").innerText = score;
 }
