@@ -1,12 +1,13 @@
 let locations = [];
 let currentLocation = null;
 let timerInterval;
-let timeLeft = 300; // 5 minutes (in seconds)
+let timeLeft = 300; // 5 minutes
 let score = 100;
-let clueType = "";
+let revealedStreet = false;
+let revealedPostcode = false;
 
 document.addEventListener("DOMContentLoaded", () => {
-    fetch("railway_addresses_cleaned.json")
+    fetch("railway_addresses_109.json")
         .then(response => response.json())
         .then(data => {
             locations = data;
@@ -28,51 +29,34 @@ function generateLocation() {
     document.getElementById("fullLocation").style.display = "none";
     document.getElementById("score").innerText = "100";
     score = 100;
+    revealedStreet = false;
+    revealedPostcode = false;
 
-    // Randomly pick whether to show part of the street or the postcode first
-    clueType = Math.random() < 0.5 ? "street" : "postcode";
-    let clueText = "";
+    // Randomly display either Street Name or Postcode
+    let showStreet = Math.random() < 0.5;
+    document.getElementById("initialHint").innerText = showStreet ? `Street: ${currentLocation.street}` : `Postcode: ${currentLocation.postcode.split(" ")[0]}...`;
 
-    if (clueType === "street") {
-        let streetParts = currentLocation.street.split(" ");
-        clueText = streetParts.length > 1 ? streetParts[0] + "..." : "Unknown Street";
-    } else {
-        let postcodeParts = currentLocation.postcode.split(" ");
-        clueText = postcodeParts.length > 1 ? postcodeParts[0] + "..." : "Unknown Postcode";
-    }
-
-    document.getElementById("clue").innerText = clueText;
-
-    // Reset the map display
-    document.getElementById("mapContainer").innerHTML = "";
-    document.getElementById("mapContainer").style.display = "none";
-
-    // Start the timer
     startTimer();
 }
 
 function revealStreet() {
-    if (!currentLocation) return;
+    if (!currentLocation || revealedStreet) return;
 
     document.getElementById("street").innerText = currentLocation.street;
+    revealedStreet = true;
     document.getElementById("fullLocation").style.display = "block";
-
-    if (clueType !== "street") {
-        score -= 10;
-        updateScore();
-    }
+    score -= 10;
+    updateScore();
 }
 
 function revealPostcode() {
-    if (!currentLocation) return;
+    if (!currentLocation || revealedPostcode) return;
 
     document.getElementById("postcode").innerText = currentLocation.postcode;
+    revealedPostcode = true;
     document.getElementById("fullLocation").style.display = "block";
-
-    if (clueType !== "postcode") {
-        score -= 10;
-        updateScore();
-    }
+    score -= 10;
+    updateScore();
 }
 
 function finishGame() {
@@ -82,15 +66,9 @@ function finishGame() {
     document.getElementById("mapsLink").innerText = "View on Google Maps";
     document.getElementById("fullLocation").style.display = "block";
 
-    // Fetch and display the map screenshot without an API key
-    let lat = currentLocation.latitude;
-    let lon = currentLocation.longitude;
-    let mapImageUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${lat},${lon}&zoom=16&size=400x400&markers=color:red%7C${lat},${lon}`;
-
-    // Use an image tag instead of an iframe
-    let mapImage = `<img src="${mapImageUrl}" alt="Location Screenshot" width="400" height="400" onerror="this.onerror=null; this.src='fallback-map.png';">`;
-    document.getElementById("mapContainer").innerHTML = mapImage;
-    document.getElementById("mapContainer").style.display = "block";
+    // Static Map Screenshot from Yandex (No API Required)
+    const staticMapUrl = `https://static-maps.yandex.ru/1.x/?lang=en-US&size=450,300&z=17&ll=${currentLocation.longitude},${currentLocation.latitude}&l=map&pt=${currentLocation.longitude},${currentLocation.latitude},pm2rdm`;
+    document.getElementById("mapImage").src = staticMapUrl;
 
     clearInterval(timerInterval);
 }
@@ -115,7 +93,7 @@ function startTimer() {
 function updateTimerDisplay() {
     let minutes = Math.floor(timeLeft / 60);
     let seconds = timeLeft % 60;
-    document.getElementById("timer").innerText = `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+    document.getElementById("timer").innerText = `${minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
 }
 
 function updateScore() {
